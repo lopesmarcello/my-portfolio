@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lopesmarcello.portfolio.dtos.UpdateResumeRequestDTO;
+import com.lopesmarcello.portfolio.dtos.UpdateResumeResponseDTO;
 import com.lopesmarcello.portfolio.entities.ResumeEntity;
 import com.lopesmarcello.portfolio.mappers.ResumeMapper;
 import com.lopesmarcello.portfolio.services.ResumeService;
@@ -23,9 +24,10 @@ public class ResumeController {
     private final ResumeService service;
 
     @GetMapping("/")
-    public ResponseEntity<ResumeEntity> getResume() {
+    public ResponseEntity<UpdateResumeResponseDTO> getResume() {
         ResumeEntity resume = service.getResume();
-        return ResponseEntity.ok(resume);
+        UpdateResumeResponseDTO dto = ResumeMapper.toResponseDTO(resume);
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/")

@@ -15,30 +15,29 @@ public class ResumeService {
     private final ResumeRepository repository;
 
     public ResumeEntity getResume() {
-        return repository.findById(1L).orElse(new ResumeEntity());
+        return repository.findByIdWithDetails(1L).orElse(new ResumeEntity());
     }
 
     @Transactional
     public ResumeEntity createResume(ResumeEntity resume) {
-        // If client sent an id for a create, clear it (or treat as update)
         if (resume.getId() == null) {
             return repository.save(resume);
         }
 
-        // Update existing safely to avoid merge/version conflicts
-        ResumeEntity existing = repository.findById(resume.getId())
+        ResumeEntity existing = repository.findByIdWithDetails(resume.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Resume not found"));
         existing.setFullName(resume.getFullName());
         existing.setAbout(resume.getAbout());
         existing.setEmail(resume.getEmail());
         existing.setPhone(resume.getPhone());
         existing.setTitle(resume.getTitle());
-        // copy/update relationships (experiences) carefully
+
         return repository.save(existing);
     }
 
     public ResumeEntity updateResume(ResumeEntity newResume) {
-        ResumeEntity existing = repository.findById(1L).orElseThrow(() -> new RuntimeException("Resume not found"));
+        ResumeEntity existing = repository.findByIdWithDetails(1L)
+                .orElseThrow(() -> new RuntimeException("Resume not found"));
         existing.setId(1L);
         existing.setFullName(newResume.getFullName());
         existing.setTitle(newResume.getTitle());

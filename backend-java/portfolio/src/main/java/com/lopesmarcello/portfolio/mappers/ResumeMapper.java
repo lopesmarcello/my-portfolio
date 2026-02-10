@@ -1,6 +1,7 @@
 package com.lopesmarcello.portfolio.mappers;
 
 import com.lopesmarcello.portfolio.dtos.UpdateResumeRequestDTO;
+import com.lopesmarcello.portfolio.dtos.UpdateResumeResponseDTO;
 import com.lopesmarcello.portfolio.entities.ResumeEntity;
 
 public class ResumeMapper {
@@ -17,4 +18,18 @@ public class ResumeMapper {
         return entity;
     }
 
+    public static UpdateResumeResponseDTO toResponseDTO(ResumeEntity entity) {
+        UpdateResumeResponseDTO dto = new UpdateResumeResponseDTO();
+        dto.setId(entity.getId());
+        dto.setFullName(entity.getFullName());
+        dto.setTitle(entity.getTitle());
+        dto.setEmail(entity.getEmail());
+        dto.setPhone(entity.getPhone());
+        dto.setAbout(entity.getAbout());
+        dto.setLinks(entity.getLinks());
+        dto.setExperiences(entity.getExperiences());
+        dto.setVersion(entity.getVersion());
+
+        return dto;
+    }
 }
