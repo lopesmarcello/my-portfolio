@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lopesmarcello.portfolio.dtos.UpdateResumeRequestDTO;
-import com.lopesmarcello.portfolio.dtos.UpdateResumeResponseDTO;
-import com.lopesmarcello.portfolio.entities.ResumeEntity;
+import com.lopesmarcello.portfolio.dtos.ResumeResponseDTO;
 import com.lopesmarcello.portfolio.mappers.ResumeMapper;
 import com.lopesmarcello.portfolio.services.ResumeService;
 
@@ -24,23 +23,22 @@ public class ResumeController {
     private final ResumeService service;
 
     @GetMapping("/")
-    public ResponseEntity<UpdateResumeResponseDTO> getResume() {
-        ResumeEntity resume = service.getResume();
-        UpdateResumeResponseDTO dto = ResumeMapper.toResponseDTO(resume);
-        return ResponseEntity.ok(dto);
+    public ResponseEntity<ResumeResponseDTO> getResume() {
+        ResumeResponseDTO resume = service.getResume();
+        return ResponseEntity.ok(resume);
     }
 
     @PostMapping("/")
-    public ResponseEntity<ResumeEntity> createResume(@RequestBody UpdateResumeRequestDTO dto) {
-        ResumeEntity created = service.createResume(ResumeMapper.toEntity(dto));
+    public ResponseEntity<ResumeResponseDTO> createResume(@RequestBody UpdateResumeRequestDTO dto) {
+        ResumeResponseDTO responseDTO = service.createResume(ResumeMapper.toEntity(dto));
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @PutMapping("/")
-    public ResponseEntity<ResumeEntity> updateResume(@RequestBody UpdateResumeRequestDTO dto) {
-        ResumeEntity updated = service.updateResume(ResumeMapper.toEntity(dto));
-        return ResponseEntity.ok(updated);
+    public ResponseEntity<ResumeResponseDTO> updateResume(@RequestBody UpdateResumeRequestDTO dto) {
+        ResumeResponseDTO responseDTO = service.updateResume(ResumeMapper.toEntity(dto));
+        return ResponseEntity.ok(responseDTO);
     }
 
 }
