@@ -2,7 +2,9 @@ package com.lopesmarcello.portfolio.controllers;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +12,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.lopesmarcello.portfolio.dtos.UpdateResumeRequestDTO;
+import com.lopesmarcello.portfolio.dtos.AddExperienceRequestDTO;
+import com.lopesmarcello.portfolio.dtos.ExperienceDTO;
 import com.lopesmarcello.portfolio.dtos.ResumeResponseDTO;
+import com.lopesmarcello.portfolio.dtos.UpdateExperienceRequestDTO;
+import com.lopesmarcello.portfolio.dtos.UpdateLinkRequestDTO;
+import com.lopesmarcello.portfolio.embeddables.Link;
+import com.lopesmarcello.portfolio.entities.ExperienceEntity;
 import com.lopesmarcello.portfolio.mappers.ResumeMapper;
 import com.lopesmarcello.portfolio.services.ResumeService;
 
@@ -39,6 +47,52 @@ public class ResumeController {
     public ResponseEntity<ResumeResponseDTO> updateResume(@RequestBody UpdateResumeRequestDTO dto) {
         ResumeResponseDTO responseDTO = service.updateResume(ResumeMapper.toEntity(dto));
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @PostMapping("/experiences")
+    public ResponseEntity<ExperienceDTO> addExperience(@RequestBody AddExperienceRequestDTO dto) {
+        ExperienceEntity experience = new ExperienceEntity();
+        experience.setCompanyName(dto.getCompanyName());
+        experience.setDescription(dto.getDescription());
+        experience.setStartDate(dto.getStartDate());
+        experience.setEndDate(dto.getEndDate());
+
+        ExperienceEntity saved = service.addExperience(experience);
+        ExperienceDTO responseDTO = ResumeMapper.convertExperienceDTO(saved);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+
+    @DeleteMapping("/experiences/{id}")
+    public ResponseEntity<Void> removeExperience(@PathVariable Long id) {
+        service.removeExperience(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/experiences/{id}")
+    public ResponseEntity<ExperienceDTO> updateExperience(
+            @PathVariable Long id,
+            @RequestBody UpdateExperienceRequestDTO dto) {
+        ExperienceEntity experience = new ExperienceEntity();
+        experience.setCompanyName(dto.getCompanyName());
+        experience.setDescription(dto.getDescription());
+        experience.setStartDate(dto.getStartDate());
+        experience.setEndDate(dto.getEndDate());
+
+        ExperienceEntity updated = service.updateExperience(id, experience);
+        ExperienceDTO responseDTO = ResumeMapper.convertExperienceDTO(updated);
+
+        return ResponseEntity.ok(responseDTO);
+    }
+
+    @PutMapping("/links/{index}")
+    public ResponseEntity<Link> updateLink(
+            @PathVariable int index,
+            @RequestBody UpdateLinkRequestDTO dto) {
+        Link link = new Link(dto.getLabel(), dto.getUrl());
+        Link updated = service.updateLink(index, link);
+
+        return ResponseEntity.ok(updated);
     }
 
 }

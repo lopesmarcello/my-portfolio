@@ -10,6 +10,7 @@ import com.lopesmarcello.portfolio.embeddables.Link;
 import com.lopesmarcello.portfolio.entities.ExperienceEntity;
 import com.lopesmarcello.portfolio.entities.ResumeEntity;
 import com.lopesmarcello.portfolio.mappers.ResumeMapper;
+import com.lopesmarcello.portfolio.repositories.ExperienceRepository;
 import com.lopesmarcello.portfolio.repositories.ResumeRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -20,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ResumeService {
     private final ResumeRepository repository;
+    private final ExperienceRepository experienceRepository;
 
     @Transactional
     public ResumeResponseDTO getResume() {
@@ -108,5 +110,60 @@ public class ResumeService {
         ResumeResponseDTO responseDTO = ResumeMapper.toResponseDTO(saved);
 
         return responseDTO;
+    }
+
+    @Transactional
+    public ExperienceEntity addExperience(ExperienceEntity experience) {
+        ResumeEntity resume = repository.findById(1L)
+                .orElseThrow(() -> new RuntimeException("Resume not found"));
+
+        experience.setResume(resume);
+        return experienceRepository.save(experience);
+    }
+
+    @Transactional
+    public void removeExperience(Long experienceId) {
+        ExperienceEntity experience = experienceRepository.findById(experienceId)
+                .orElseThrow(() -> new EntityNotFoundException("Experience not found"));
+
+        if (experience.getResume() == null || !experience.getResume().getId().equals(1L)) {
+            throw new RuntimeException("Experience does not belong to resume ID 1");
+        }
+
+        experienceRepository.delete(experience);
+    }
+
+    @Transactional
+    public ExperienceEntity updateExperience(Long experienceId, ExperienceEntity updatedExperience) {
+        ExperienceEntity experience = experienceRepository.findById(experienceId)
+                .orElseThrow(() -> new EntityNotFoundException("Experience not found"));
+
+        if (experience.getResume() == null || !experience.getResume().getId().equals(1L)) {
+            throw new RuntimeException("Experience does not belong to resume ID 1");
+        }
+
+        experience.setCompanyName(updatedExperience.getCompanyName());
+        experience.setDescription(updatedExperience.getDescription());
+        experience.setStartDate(updatedExperience.getStartDate());
+        experience.setEndDate(updatedExperience.getEndDate());
+
+        return experienceRepository.save(experience);
+    }
+
+    @Transactional
+    public Link updateLink(int index, Link updatedLink) {
+        ResumeEntity resume = repository.findByIdWithLinks(1L)
+                .orElseThrow(() -> new RuntimeException("Resume not found"));
+
+        if (index < 0 || index >= resume.getLinks().size()) {
+            throw new RuntimeException("Link index out of bounds");
+        }
+
+        Link link = resume.getLinks().get(index);
+        link.setLabel(updatedLink.getLabel());
+        link.setUrl(updatedLink.getUrl());
+
+        repository.save(resume);
+        return link;
     }
 }
