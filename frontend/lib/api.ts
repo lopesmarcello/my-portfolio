@@ -66,11 +66,31 @@ export async function getResume(): Promise<ResumeData> {
 export async function getPosts(): Promise<Post[]> {
     const response = await fetch(`${API_URL}/posts/`);
     if (!response.ok) throw new Error("Failed to fetch posts");
-    return response.json();
+    const data = await response.json();
+
+    // Parse dates - backend may return LocalDateTime objects instead of ISO strings
+    return Array.isArray(data) ? data.map(post => ({
+        ...post,
+        createdAt: typeof post.createdAt === 'string'
+            ? post.createdAt
+            : post.createdAt instanceof Date
+                ? post.createdAt.toISOString()
+                : new Date(post.createdAt).toISOString()
+    })) : data;
 }
 
 export async function getPost(id: number): Promise<Post> {
     const response = await fetch(`${API_URL}/posts/${id}`);
     if (!response.ok) throw new Error("Failed to fetch post");
-    return response.json();
+    const data = await response.json();
+
+    // Parse date - backend may return LocalDateTime object instead of ISO string
+    return {
+        ...data,
+        createdAt: typeof data.createdAt === 'string'
+            ? data.createdAt
+            : data.createdAt instanceof Date
+                ? data.createdAt.toISOString()
+                : new Date(data.createdAt).toISOString()
+    };
 }

@@ -4,11 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getAbout, AboutData } from "@/lib/api";
 import TechStack from "@/components/TechStack";
+import LiquidEther from "@/components/LiquidEther";
 import { Mail, Github, Linkedin } from "lucide-react";
 
 export default function Home() {
   const [about, setAbout] = useState<AboutData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,6 +25,20 @@ export default function Home() {
     };
 
     fetchData();
+  }, []);
+
+  // Detect dark mode preference
+  useEffect(() => {
+    const checkDarkMode = () => {
+      const isDarkMode = document.documentElement.classList.contains("dark");
+      setIsDark(isDarkMode);
+    };
+
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, { attributes: true });
+
+    return () => observer.disconnect();
   }, []);
 
   if (isLoading) {
@@ -50,69 +66,84 @@ export default function Home() {
 
   return (
     <div className="w-full">
-      {/* Hero Section */}
-      <section className="py-20 md:py-32">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-            <div className="flex flex-col justify-center order-2 md:order-1">
-              <h1 className="text-5xl md:text-6xl font-bold text-black dark:text-white mb-4 leading-tight">
-                Hey, I'm{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-green-500">
-                  {about.name}
-                </span>
-              </h1>
-              <p className="text-2xl md:text-3xl font-semibold text-gray-700 dark:text-gray-300 mb-6">
-                {about.title}
-              </p>
-              <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 leading-relaxed max-w-lg">
-                {about.description}
-              </p>
+      {/* Hero Section with LiquidEther Background */}
+      <section className="relative overflow-hidden py-20 md:py-32">
+        {/* LiquidEther Background */}
+        <div className="absolute inset-0 z-0">
+          <LiquidEther
+            colors={isDark ? ["#16a34a", "#15803d", "#059669"] : ["#60a5fa", "#3b82f6", "#2563eb"]}
+            mouseForce={25}
+            cursorSize={120}
+            autoDemo={true}
+            autoSpeed={0.3}
+            autoIntensity={1.5}
+          />
+        </div>
 
-              <div className="flex flex-wrap gap-4">
-                <Link
-                  href="/curriculum"
-                  className="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors"
-                >
-                  View My CV
-                </Link>
-                <Link
-                  href="/content"
-                  className="px-8 py-3 border-2 border-green-600 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-950 font-bold rounded-lg transition-colors"
-                >
-                  Read My Blog
-                </Link>
+        {/* Content Layer */}
+        <div className="relative z-10">
+          <div className="max-w-6xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+              <div className="flex flex-col justify-center order-2 md:order-1">
+                <h1 className="text-5xl md:text-6xl font-bold dark:text-white text-gray-900 drop-shadow-lg mb-4 leading-tight">
+                  Hey, I'm{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r dark:from-green-200 dark:to-green-100 from-blue-600 to-blue-500">
+                    {about.name}
+                  </span>
+                </h1>
+                <p className="text-2xl md:text-3xl font-semibold dark:text-gray-100 text-gray-700 drop-shadow-md mb-6">
+                  {about.title}
+                </p>
+                <p className="text-lg dark:text-gray-200 text-gray-600 drop-shadow-md mb-8 leading-relaxed max-w-lg">
+                  {about.description}
+                </p>
+
+                <div className="flex flex-wrap gap-4">
+                  <Link
+                    href="/curriculum"
+                    className="px-8 py-3 dark:bg-white dark:text-green-700 bg-gray-900 text-white font-bold rounded-lg dark:hover:bg-gray-100 hover:bg-gray-800 transition-all hover:scale-105 shadow-lg"
+                  >
+                    View My CV
+                  </Link>
+                  <Link
+                    href="/content"
+                    className="px-8 py-3 border-2 dark:border-white border-gray-900 dark:text-white text-gray-900 font-bold rounded-lg dark:hover:bg-white dark:hover:text-green-700 hover:bg-gray-900 hover:text-white transition-all hover:scale-105 shadow-lg"
+                  >
+                    Read My Blog
+                  </Link>
+                </div>
               </div>
-            </div>
 
-            {/* Placeholder for photo */}
-            <div className="order-1 md:order-2">
-              <div className="w-full aspect-square rounded-2xl bg-gradient-to-br from-green-400 via-green-500 to-emerald-600 opacity-80 flex items-center justify-center">
-                <div className="text-center text-white">
-                  <div className="text-6xl mb-4">📸</div>
-                  <p className="text-sm font-semibold">Your photo here</p>
-                  <p className="text-xs opacity-75">UPDATE_PHOTO_URL</p>
+              {/* Placeholder for photo */}
+              <div className="order-1 md:order-2">
+                <div className="w-full aspect-square rounded-2xl dark:bg-white/20 bg-gray-900/20 backdrop-blur-sm border dark:border-white/30 border-gray-900/30 flex items-center justify-center shadow-2xl">
+                  <div className="text-center dark:text-white text-gray-900">
+                    <div className="text-6xl mb-4">📸</div>
+                    <p className="text-sm font-semibold drop-shadow-md">Your photo here</p>
+                    <p className="text-xs opacity-75 drop-shadow-md">UPDATE_PHOTO_URL</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Social Links */}
-          {about.links && about.links.length > 0 && (
-            <div className="flex gap-4 mt-12">
-              {about.links.map((link) => (
-                <a
-                  key={`${link.label}-${link.url}`}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-3 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-green-100 dark:hover:bg-green-950 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-                  title={link.label}
-                >
-                  <span className="text-lg">{link.label}</span>
-                </a>
-              ))}
-            </div>
-          )}
+            {/* Social Links */}
+            {about.links && about.links.length > 0 && (
+              <div className="flex gap-4 mt-12">
+                {about.links.map((link) => (
+                  <a
+                    key={`${link.label}-${link.url}`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-3 rounded-full dark:bg-white/20 bg-gray-900/20 backdrop-blur-sm dark:text-white text-gray-900 dark:hover:bg-white dark:hover:text-green-700 hover:bg-gray-900 hover:text-white transition-all hover:scale-110 shadow-lg dark:border-white/30 border border-gray-900/30"
+                    title={link.label}
+                  >
+                    <span className="text-lg">{link.label}</span>
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
