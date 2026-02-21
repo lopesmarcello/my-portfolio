@@ -31,9 +31,6 @@ public class PostController {
     @GetMapping("/")
     public ResponseEntity<List<PostEntity>> listPosts() {
         List<PostEntity> found = service.listPosts();
-        if (found.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(found);
     }
 
