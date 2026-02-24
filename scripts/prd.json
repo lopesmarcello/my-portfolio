@@ -72,7 +72,7 @@
       "id": "US-012",
       "title": "Create admin About management page",
       "description": "As the admin, I want to edit my About section content so my portfolio bio, tech stack, and social links stay current.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-013",

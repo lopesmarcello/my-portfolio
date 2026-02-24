@@ -180,6 +180,20 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - The dashboard is a server component (no `"use client"`) — just links and static content
 ---
 
+## 2026-02-24 - US-012
+- Created `frontend/app/admin/(cms)/about/page.tsx` — About management page with bio fields, technologies list, and social links list
+- Page loads current About data via `getAbout()`, allows editing all fields, and saves via `adminUpdateAbout()` (single PUT with full payload)
+- Technologies and links sections support inline add/remove rows; each row has two inputs (name/imageUrl for tech, label/url for links)
+- Files changed:
+  - `frontend/app/admin/(cms)/about/page.tsx` (new)
+  - `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (updated, gitignored)
+- **Learnings for future iterations:**
+  - `adminUpdateAbout()` accepts the full DTO including technologies and links arrays — no need to call granular add/remove endpoints for a simple editor
+  - Pattern for dynamic list fields: store as array in form state, map to input rows, update via index — works cleanly with React controlled inputs
+  - Admin pages under `(cms)/` automatically pick up the sidebar layout; no extra routing setup needed beyond adding the page file
+  - `/admin/about` must be added to both `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` in AppRoutes, LayoutRoutes, ParamMap, and LayoutSlotMap
+---
+
 ## 2026-02-24 - US-010
 - Created `frontend/app/admin/login/page.tsx` — login form with username/password, loading state, error display, redirects to `/admin/dashboard` on success
 - Restructured admin routing: moved sidebar to `app/admin/(cms)/layout.tsx` (route group); replaced `app/admin/layout.tsx` with a minimal pass-through
