@@ -6,7 +6,7 @@
       "id": "US-001",
       "title": "Add Spring Security + JWT dependencies to backend",
       "description": "As a developer, I need the backend to have Spring Security and JWT libraries configured so I can protect write endpoints.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-002",

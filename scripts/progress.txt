@@ -1,3 +1,22 @@
+## Codebase Patterns
+- Java/Maven not available in this container — backend tests cannot be run directly; verify manually or in CI
+- Frontend TypeScript check: `/workspace/frontend/node_modules/.bin/tsc --noEmit --project /workspace/frontend/tsconfig.json`
+- Frontend has pre-existing lint errors in `LiquidEther.jsx`, `Header.tsx`, `app/page.tsx`, `app/curriculum/page.tsx` — do not fail on those
+- Spring Boot 4 uses `SecurityFilterChain` bean pattern, NOT `WebSecurityConfigurerAdapter` (deprecated)
+- jjwt 0.12.x uses `Jwts.builder()` / `Jwts.parser()` API (not `parserBuilder()` which is 0.11.x)
+- prd.json lives at `/workspace/scripts/prd.json`; progress.txt lives at `/workspace/scripts/progress.txt`
+
 # Ralph Progress Log
 Started: Tue Feb 24 11:45:41 PST 2026
+---
+
+## 2026-02-24 - US-001
+- Added Spring Security and JWT dependencies to backend pom.xml
+- Files changed: `backend-java/portfolio/pom.xml`, `scripts/prd.json`, `scripts/progress.txt`
+- Dependencies added: `spring-boot-starter-security`, `jjwt-api:0.12.6`, `jjwt-impl:0.12.6` (runtime), `jjwt-jackson:0.12.6` (runtime)
+- **Learnings for future iterations:**
+  - Java/Maven not installed in this container — cannot run `mvn test` directly. Backend quality checks must be verified via CI or manually.
+  - Frontend TypeScript check passes clean. Pre-existing lint errors in several frontend files; these are not from our changes.
+  - Spring Boot uses version 4.0.2 (latest). Security config must use `SecurityFilterChain` bean pattern.
+  - jjwt version 0.12.6 is the latest 0.12.x release. The API uses `Jwts.parser()` not `Jwts.parserBuilder()`.
 ---
