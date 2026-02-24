@@ -54,7 +54,7 @@
       "id": "US-009",
       "title": "Create admin layout (no public Header/Footer)",
       "description": "As the admin, I want a dedicated admin shell with a sidebar so I can navigate between content sections without the public site chrome.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-010",

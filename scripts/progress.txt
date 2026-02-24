@@ -1,4 +1,6 @@
 ## Codebase Patterns
+- Next.js route groups: public pages live in `app/(public)/` (Header/Footer via `(public)/layout.tsx`); admin pages in `app/admin/` (no public chrome); root `app/layout.tsx` is minimal (html/body only)
+- When adding new routes/layouts, also update `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (gitignored, regenerated on build, but must be updated manually for local tsc to pass)
 - Next.js middleware (Edge Runtime): read `admin_token` cookie via `request.cookies.get(TOKEN_COOKIE)?.value`; forward as `Authorization: Bearer <token>` header to backend `/api/auth/me`; redirect to `/admin/login` if 401, redirect `/admin/login` → `/admin/dashboard` if already authenticated
 - Java/Maven not available in this container — backend tests cannot be run directly; verify manually or in CI
 - Frontend TypeScript check: `/workspace/frontend/node_modules/.bin/tsc --noEmit --project /workspace/frontend/tsconfig.json`
@@ -144,4 +146,23 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - Forward token as `Authorization: Bearer` header to backend (not as cookie) since backend JwtAuthenticationFilter reads the Authorization header
   - Wrap `fetch` in try/catch in middleware — network errors should result in redirecting to login, not crashing
   - `config.matcher: ["/admin/:path*"]` matches `/admin/login` and all nested routes in one pattern
+---
+
+## 2026-02-24 - US-009
+- Restructured routing with Next.js route groups to isolate admin and public layouts
+- Moved all public pages to `app/(public)/` with a new `(public)/layout.tsx` that adds Header/Footer
+- Updated root `app/layout.tsx` to be minimal (html/body with fonts, no Header/Footer)
+- Created `app/admin/layout.tsx` — sidebar with navigation (Dashboard, About, Resume, Posts) and logout button using `clearAuthToken` from adminApi
+- Files changed:
+  - `frontend/app/layout.tsx` (modified — removed Header/Footer)
+  - `frontend/app/(public)/layout.tsx` (new — public Header/Footer wrapper)
+  - `frontend/app/(public)/page.tsx` (renamed from `app/page.tsx`)
+  - `frontend/app/(public)/curriculum/layout.tsx` + `page.tsx` (renamed)
+  - `frontend/app/(public)/content/layout.tsx` + `page.tsx` + `[id]/layout.tsx` + `[id]/page.tsx` (renamed)
+  - `frontend/app/admin/layout.tsx` (new — admin shell with sidebar)
+- **Learnings for future iterations:**
+  - Route groups (parentheses dirs) are the correct Next.js App Router pattern for sharing different layout chrome between route segments
+  - Stale `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` cause tsc errors when file paths change; these files are gitignored but need manual update until next build regenerates them
+  - Admin layout imports `clearAuthToken` from `@/lib/adminApi` for the logout button; no additional helpers needed
+  - `usePathname()` from `next/navigation` gives the active route for sidebar highlighting
 ---
