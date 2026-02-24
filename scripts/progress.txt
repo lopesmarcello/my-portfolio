@@ -7,6 +7,9 @@
 - prd.json lives at `/workspace/scripts/prd.json`; progress.txt lives at `/workspace/scripts/progress.txt`
 - Admin credentials stored as env vars `ADMIN_USERNAME` / `ADMIN_PASSWORD` in application.properties (same pattern as JWT_SECRET)
 - Auth endpoint: `POST /api/auth/login` — body `{username, password}`, returns `{token}` or 401
+- Spring Security CORS: define `CorsConfigurationSource` bean in `SecurityConfig` + use `.cors(Customizer.withDefaults())` — this takes precedence over `WebMvcConfigurer.addCorsMappings()`
+- Security rule order: `/api/auth/login` permitAll → GET /api/** permitAll → everything else authenticated
+- JWT filter is in `security` package; `SecurityConfig` is in `config` package (follows existing package conventions)
 
 # Ralph Progress Log
 Started: Tue Feb 24 11:45:41 PST 2026
@@ -47,4 +50,18 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - AuthService uses field injection with `@Value` (Spring injects after construction since RequiredArgsConstructor only covers final fields); for `@Value` fields, field injection is simpler than constructor injection
   - `AuthController` returns `ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()` (no body) on bad credentials
   - At startup, Spring Boot will fail if ADMIN_USERNAME or ADMIN_PASSWORD env vars are not set — this is intentional
+---
+
+## 2026-02-24 - US-004
+- Created `JwtAuthenticationFilter.java` in `com.lopesmarcello.portfolio.security` — extends `OncePerRequestFilter`, extracts Bearer token from Authorization header, validates via `JwtService`, sets `SecurityContextHolder`
+- Created `SecurityConfig.java` in `com.lopesmarcello.portfolio.config` — `@EnableWebSecurity`, `SecurityFilterChain` bean with stateless session, CSRF disabled, GET public + login public + writes authenticated, JWT filter before `UsernamePasswordAuthenticationFilter`
+- Defined `CorsConfigurationSource` bean in `SecurityConfig` matching `WebConfig` CORS settings (ports 3000/3001, all methods, credentials allowed)
+- Files changed:
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/security/JwtAuthenticationFilter.java` (new)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/config/SecurityConfig.java` (new)
+- **Learnings for future iterations:**
+  - When `CorsConfigurationSource` bean is defined in `SecurityConfig` and `.cors(Customizer.withDefaults())` is used, Spring Security handles CORS at the filter level — `WebConfig.addCorsMappings()` becomes redundant but harmless
+  - `UsernamePasswordAuthenticationToken(principal, null, List.of())` — pass empty list (not null) for authorities to mark the token as authenticated
+  - No `UserDetailsService` or `PasswordEncoder` beans are needed when auth is handled manually via JWT filter
+  - Spring Boot will log a random default user password warning but it's harmless since form login is not used
 ---

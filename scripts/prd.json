@@ -24,7 +24,7 @@
       "id": "US-004",
       "title": "Create JWT authentication filter and Security configuration",
       "description": "As a developer, I need Spring Security configured to protect all write endpoints while keeping GET endpoints public.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-005",
