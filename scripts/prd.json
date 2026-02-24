@@ -42,7 +42,7 @@
       "id": "US-007",
       "title": "Add admin API functions and auth utilities to frontend",
       "description": "As a developer, I need frontend API helpers that include JWT cookies in requests and cover all admin mutations so admin pages can call the backend securely.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-008",

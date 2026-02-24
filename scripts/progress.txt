@@ -2,6 +2,9 @@
 - Java/Maven not available in this container — backend tests cannot be run directly; verify manually or in CI
 - Frontend TypeScript check: `/workspace/frontend/node_modules/.bin/tsc --noEmit --project /workspace/frontend/tsconfig.json`
 - Frontend has pre-existing lint errors in `LiquidEther.jsx`, `Header.tsx`, `app/page.tsx`, `app/curriculum/page.tsx` — do not fail on those
+- Admin JWT stored in cookie named `admin_token`; `setAuthToken`/`getAuthToken`/`clearAuthToken` helpers live in `frontend/lib/adminApi.ts`
+- `authFetch` in `adminApi.ts` auto-adds `Authorization: Bearer <token>` header; skips `Content-Type: application/json` for FormData (multipart uploads)
+- Admin API file: `frontend/lib/adminApi.ts` — imports nothing from `api.ts` to keep concerns separated
 - Spring Boot 4 uses `SecurityFilterChain` bean pattern, NOT `WebSecurityConfigurerAdapter` (deprecated)
 - jjwt 0.12.x uses `Jwts.builder()` / `Jwts.parser()` API (not `parserBuilder()` which is 0.11.x)
 - prd.json lives at `/workspace/scripts/prd.json`; progress.txt lives at `/workspace/scripts/progress.txt`
@@ -110,4 +113,19 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - `WebConfig.addResourceHandlers()` requires absolute path with `file:` prefix: `"file:" + Paths.get(uploadDir).toAbsolutePath() + "/"`
   - `SecurityConfig` needs explicit `GET /uploads/**` permitAll rule or uploaded files will return 401
   - `file.transferTo(destination)` uses `Path` parameter (not `File`) — works correctly with NIO path
+---
+
+## 2026-02-24 - US-007
+- Created `frontend/lib/adminApi.ts` with cookie-based auth utilities and all admin CRUD helpers
+- Files changed:
+  - `frontend/lib/adminApi.ts` (new)
+- Auth utilities: `setAuthToken`, `getAuthToken`, `clearAuthToken`, `isAuthenticated` — store JWT in `admin_token` cookie (readable by Next.js middleware)
+- Auth API: `adminLogin` (POST /api/auth/login → sets cookie), `adminLogout` (clears cookie)
+- About admin: `adminCreateAbout`, `adminUpdateAbout`, `adminAddTechnology`, `adminUpdateTechnology`, `adminRemoveTechnology`, `adminAddAboutLink`, `adminUpdateAboutLink`, `adminRemoveAboutLink`
+- Resume admin: `adminCreateResume`, `adminUpdateResume`, `adminAddExperience`, `adminUpdateExperience`, `adminRemoveExperience`, `adminReorderExperiences`, `adminUpdateResumeLink`
+- Posts admin: `adminCreatePost`, `adminUpdatePost`, `adminUploadImage`
+- **Learnings for future iterations:**
+  - Cookie must NOT be HttpOnly so both client JS and Next.js middleware can read it (middleware reads `request.cookies`)
+  - `authFetch` helper omits `Content-Type` header when body is `FormData` so the browser sets the correct multipart boundary automatically
+  - Cookie name `admin_token` is used in the auth check — Next.js middleware (US-008) should look for this cookie
 ---
