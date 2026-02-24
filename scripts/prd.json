@@ -1,0 +1,108 @@
+{
+  "branchName": "ralph/admin-cms",
+  "title": "Admin CMS Panel",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Add Spring Security + JWT dependencies to backend",
+      "description": "As a developer, I need the backend to have Spring Security and JWT libraries configured so I can protect write endpoints.",
+      "passes": false
+    },
+    {
+      "id": "US-002",
+      "title": "Create JWT utility service",
+      "description": "As a developer, I need a JWT utility class to generate and validate tokens so auth can be stateless.",
+      "passes": false
+    },
+    {
+      "id": "US-003",
+      "title": "Create authentication endpoints",
+      "description": "As the admin, I want to log in with my credentials and receive a JWT so I can make authenticated requests.",
+      "passes": false
+    },
+    {
+      "id": "US-004",
+      "title": "Create JWT authentication filter and Security configuration",
+      "description": "As a developer, I need Spring Security configured to protect all write endpoints while keeping GET endpoints public.",
+      "passes": false
+    },
+    {
+      "id": "US-005",
+      "title": "Add displayOrder field to Experience entity",
+      "description": "As a developer, I need experiences to have an explicit order field so drag-and-drop reordering can be persisted.",
+      "passes": false
+    },
+    {
+      "id": "US-006",
+      "title": "Add image upload endpoint for blog post headers",
+      "description": "As the admin, I want to upload an image file for a blog post's header image so I don't have to manage external URLs manually.",
+      "passes": false
+    },
+    {
+      "id": "US-007",
+      "title": "Add admin API functions and auth utilities to frontend",
+      "description": "As a developer, I need frontend API helpers that include JWT cookies in requests and cover all admin mutations so admin pages can call the backend securely.",
+      "passes": false
+    },
+    {
+      "id": "US-008",
+      "title": "Create Next.js middleware to protect admin routes",
+      "description": "As a developer, I need Next.js middleware that redirects unauthenticated visitors away from /admin/* so the admin panel is never accessible without a valid session.",
+      "passes": false
+    },
+    {
+      "id": "US-009",
+      "title": "Create admin layout (no public Header/Footer)",
+      "description": "As the admin, I want a dedicated admin shell with a sidebar so I can navigate between content sections without the public site chrome.",
+      "passes": false
+    },
+    {
+      "id": "US-010",
+      "title": "Create admin login page",
+      "description": "As the admin, I want a login page at /admin/login so I can authenticate and access the CMS.",
+      "passes": false
+    },
+    {
+      "id": "US-011",
+      "title": "Create admin dashboard home page",
+      "description": "As the admin, I want a simple dashboard landing page so I have a home base after logging in.",
+      "passes": false
+    },
+    {
+      "id": "US-012",
+      "title": "Create admin About management page",
+      "description": "As the admin, I want to edit my About section content so my portfolio bio, tech stack, and social links stay current.",
+      "passes": false
+    },
+    {
+      "id": "US-013",
+      "title": "Create admin Resume management page",
+      "description": "As the admin, I want to edit my resume data and reorder experiences with drag-and-drop so my CV page stays accurate.",
+      "passes": false
+    },
+    {
+      "id": "US-014",
+      "title": "Create admin Blog Posts list page",
+      "description": "As the admin, I want to see all my blog posts in a list so I can manage, edit, or delete them.",
+      "passes": false
+    },
+    {
+      "id": "US-015",
+      "title": "Create admin Blog Post editor with rich text",
+      "description": "As the admin, I want a rich text editor for blog posts so I can write formatted content without knowing HTML.",
+      "passes": false
+    },
+    {
+      "id": "US-016",
+      "title": "Add image upload UI for blog post header images",
+      "description": "As the admin, I want to upload an image file directly in the post editor so I can set a header image without managing URLs externally.",
+      "passes": false
+    },
+    {
+      "id": "US-017",
+      "title": "Add drag-and-drop reordering for Technologies",
+      "description": "As the admin, I want to reorder my technologies list via drag-and-drop so the most relevant skills appear first on my portfolio.",
+      "passes": false
+    }
+  ]
+}
