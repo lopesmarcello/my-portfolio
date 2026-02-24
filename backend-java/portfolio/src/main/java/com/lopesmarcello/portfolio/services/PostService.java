@@ -28,6 +28,11 @@ public class PostService {
         return created;
     }
 
+    public void deletePost(Long id) {
+        repository.findById(id).orElseThrow(() -> new RuntimeException("Post not found"));
+        repository.deleteById(id);
+    }
+
     public PostEntity updatePostPatch(Long id, PostEntity partialPost) {
         PostEntity existingPost = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
