@@ -1,4 +1,5 @@
 ## Codebase Patterns
+- Admin sidebar layout lives in `app/admin/(cms)/layout.tsx` (route group); `app/admin/layout.tsx` is a minimal pass-through so `/admin/login` only gets the root layout (no sidebar)
 - Next.js route groups: public pages live in `app/(public)/` (Header/Footer via `(public)/layout.tsx`); admin pages in `app/admin/` (no public chrome); root `app/layout.tsx` is minimal (html/body only)
 - When adding new routes/layouts, also update `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (gitignored, regenerated on build, but must be updated manually for local tsc to pass)
 - Next.js middleware (Edge Runtime): read `admin_token` cookie via `request.cookies.get(TOKEN_COOKIE)?.value`; forward as `Authorization: Bearer <token>` header to backend `/api/auth/me`; redirect to `/admin/login` if 401, redirect `/admin/login` → `/admin/dashboard` if already authenticated
@@ -165,4 +166,19 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - Stale `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` cause tsc errors when file paths change; these files are gitignored but need manual update until next build regenerates them
   - Admin layout imports `clearAuthToken` from `@/lib/adminApi` for the logout button; no additional helpers needed
   - `usePathname()` from `next/navigation` gives the active route for sidebar highlighting
+---
+
+## 2026-02-24 - US-010
+- Created `frontend/app/admin/login/page.tsx` — login form with username/password, loading state, error display, redirects to `/admin/dashboard` on success
+- Restructured admin routing: moved sidebar to `app/admin/(cms)/layout.tsx` (route group); replaced `app/admin/layout.tsx` with a minimal pass-through
+- Updated `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` to add `/admin/login` to AppRoutes
+- Files changed:
+  - `frontend/app/admin/login/page.tsx` (new)
+  - `frontend/app/admin/(cms)/layout.tsx` (new — responsive sidebar: hidden on mobile, top nav icon bar on mobile)
+  - `frontend/app/admin/layout.tsx` (changed to pass-through)
+- **Learnings for future iterations:**
+  - Login page must NOT be inside `(cms)` route group — put it at `app/admin/login/page.tsx` to skip the sidebar layout
+  - Future admin pages (dashboard, about, resume, posts) go under `app/admin/(cms)/` to pick up the sidebar automatically
+  - `app/admin/layout.tsx` pass-through: `export default function AdminRootLayout({ children }) { return <>{children}</>; }`
+  - Routes.d.ts: `/admin/login` is an AppRoute; `/admin` stays in LayoutRoutes (both pass-through and (cms) layouts map to the `/admin` namespace)
 ---

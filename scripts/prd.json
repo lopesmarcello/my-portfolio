@@ -60,7 +60,7 @@
       "id": "US-010",
       "title": "Create admin login page",
       "description": "As the admin, I want a login page at /admin/login so I can authenticate and access the CMS.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-011",
