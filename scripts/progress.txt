@@ -1,4 +1,5 @@
 ## Codebase Patterns
+- Next.js middleware (Edge Runtime): read `admin_token` cookie via `request.cookies.get(TOKEN_COOKIE)?.value`; forward as `Authorization: Bearer <token>` header to backend `/api/auth/me`; redirect to `/admin/login` if 401, redirect `/admin/login` → `/admin/dashboard` if already authenticated
 - Java/Maven not available in this container — backend tests cannot be run directly; verify manually or in CI
 - Frontend TypeScript check: `/workspace/frontend/node_modules/.bin/tsc --noEmit --project /workspace/frontend/tsconfig.json`
 - Frontend has pre-existing lint errors in `LiquidEther.jsx`, `Header.tsx`, `app/page.tsx`, `app/curriculum/page.tsx` — do not fail on those
@@ -128,4 +129,19 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - Cookie must NOT be HttpOnly so both client JS and Next.js middleware can read it (middleware reads `request.cookies`)
   - `authFetch` helper omits `Content-Type` header when body is `FormData` so the browser sets the correct multipart boundary automatically
   - Cookie name `admin_token` is used in the auth check — Next.js middleware (US-008) should look for this cookie
+---
+
+## 2026-02-24 - US-008
+- Created `frontend/middleware.ts` at the root of the Next.js app
+- Files changed:
+  - `frontend/middleware.ts` (new)
+- Middleware matches `/admin/:path*` via the `config.matcher`
+- For `/admin/login`: redirects to `/admin/dashboard` if already authenticated
+- For all other `/admin/*`: redirects to `/admin/login` if not authenticated
+- Auth check: reads `admin_token` cookie, sends `Authorization: Bearer <token>` to `GET /api/auth/me`; returns false on network error or 401
+- **Learnings for future iterations:**
+  - Next.js Edge Runtime middleware uses `request.cookies.get(name)?.value` to read cookies
+  - Forward token as `Authorization: Bearer` header to backend (not as cookie) since backend JwtAuthenticationFilter reads the Authorization header
+  - Wrap `fetch` in try/catch in middleware — network errors should result in redirecting to login, not crashing
+  - `config.matcher: ["/admin/:path*"]` matches `/admin/login` and all nested routes in one pattern
 ---

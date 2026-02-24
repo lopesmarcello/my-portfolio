@@ -48,7 +48,7 @@
       "id": "US-008",
       "title": "Create Next.js middleware to protect admin routes",
       "description": "As a developer, I need Next.js middleware that redirects unauthenticated visitors away from /admin/* so the admin panel is never accessible without a valid session.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-009",
