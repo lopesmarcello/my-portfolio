@@ -1,10 +1,3 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
-
 /**
  * Format date to readable string format
  * @param dateString ISO date string

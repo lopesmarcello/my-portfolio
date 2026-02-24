@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { getPost, Post } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
@@ -84,11 +85,13 @@ export default function PostPage({ params }: PostPageProps) {
 
                 {/* Header Image */}
                 {post.headerImageUrl && (
-                    <div className="mb-10 -mx-6">
-                        <img
+                    <div className="relative h-96 mb-10 -mx-6">
+                        <Image
                             src={post.headerImageUrl}
                             alt={post.title}
-                            className="w-full h-96 object-cover rounded-lg"
+                            fill
+                            sizes="100vw"
+                            className="object-cover rounded-lg"
                         />
                     </div>
                 )}

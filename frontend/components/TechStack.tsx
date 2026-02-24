@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Technology } from "@/lib/api";
 
 interface TechStackProps {
@@ -19,10 +20,12 @@ export default function TechStack({ technologies }: TechStackProps) {
                                 className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gray-100/50 dark:bg-gray-900/50 border border-gray-200/60 dark:border-gray-800/60 hover:border-green-400 dark:hover:border-green-500 hover:bg-green-50/40 dark:hover:bg-green-950/30 transition-all duration-200 group cursor-default"
                             >
                                 {tech.imageUrl ? (
-                                    <img
+                                    <Image
                                         src={tech.imageUrl}
                                         alt={tech.name}
-                                        className="w-5 h-5 object-contain"
+                                        width={20}
+                                        height={20}
+                                        className="object-contain"
                                     />
                                 ) : (
                                     <div className="w-5 h-5 rounded-sm bg-gradient-to-br from-green-400 to-green-600" />

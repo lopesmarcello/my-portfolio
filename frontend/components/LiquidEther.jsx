@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import './LiquidEther.css';
 
+const EMPTY_STYLE = {};
+
 export default function LiquidEther({
   mouseForce = 20,
   cursorSize = 100,
@@ -14,7 +16,7 @@ export default function LiquidEther({
   resolution = 0.5,
   isBounce = false,
   colors = ['#5227FF', '#FF9FFC', '#B19EEF'],
-  style = {},
+  style = EMPTY_STYLE,
   className = '',
   autoDemo = true,
   autoSpeed = 0.5,
@@ -149,7 +151,7 @@ export default function LiquidEther({
         this.listenerTarget.addEventListener('mousemove', this._onMouseMove);
         this.listenerTarget.addEventListener('touchstart', this._onTouchStart, { passive: true });
         this.listenerTarget.addEventListener('touchmove', this._onTouchMove, { passive: true });
-        this.listenerTarget.addEventListener('touchend', this._onTouchEnd);
+        this.listenerTarget.addEventListener('touchend', this._onTouchEnd, { passive: true });
         if (this.docTarget) {
           this.docTarget.addEventListener('mouseleave', this._onDocumentLeave);
         }
