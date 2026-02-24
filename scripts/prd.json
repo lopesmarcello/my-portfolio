@@ -36,7 +36,7 @@
       "id": "US-006",
       "title": "Add image upload endpoint for blog post headers",
       "description": "As the admin, I want to upload an image file for a blog post's header image so I don't have to manage external URLs manually.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-007",

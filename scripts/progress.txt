@@ -8,8 +8,11 @@
 - Admin credentials stored as env vars `ADMIN_USERNAME` / `ADMIN_PASSWORD` in application.properties (same pattern as JWT_SECRET)
 - Auth endpoint: `POST /api/auth/login` — body `{username, password}`, returns `{token}` or 401
 - Spring Security CORS: define `CorsConfigurationSource` bean in `SecurityConfig` + use `.cors(Customizer.withDefaults())` — this takes precedence over `WebMvcConfigurer.addCorsMappings()`
-- Security rule order: `/api/auth/login` permitAll → GET /api/** permitAll → everything else authenticated
+- Security rule order: `/api/auth/login` permitAll → GET /api/** permitAll → GET /uploads/** permitAll → everything else authenticated
 - JWT filter is in `security` package; `SecurityConfig` is in `config` package (follows existing package conventions)
+- Static file serving: configure in `WebConfig.addResourceHandlers()` using `file:` prefix with absolute path; add corresponding permitAll rule in `SecurityConfig`
+- `MaxUploadSizeExceededException` is thrown by Spring before reaching the controller — must handle in `@RestControllerAdvice` (GlobalExceptionHandler), not in the controller method
+- Image upload: validate `MultipartFile.getContentType()` for allowed MIME types; use `UUID.randomUUID()` for filenames to avoid collisions
 
 # Ralph Progress Log
 Started: Tue Feb 24 11:45:41 PST 2026
@@ -90,4 +93,21 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - JPQL CASE expression for nullable ordering: `ORDER BY CASE WHEN e.displayOrder IS NULL THEN 1 ELSE 0 END, e.displayOrder ASC, e.startDate DESC`
   - Reorder endpoint uses `@PatchMapping` which avoids conflict with `@PutMapping("/experiences/{id}")`
   - `PATCH /api/resume/experiences/reorder` accepts `List<ReorderExperienceItemDTO>` body: `[{id, displayOrder}, ...]`
+---
+
+## 2026-02-24 - US-006
+- Added `POST /api/posts/images` multipart endpoint for blog post header image uploads
+- Files changed:
+  - `backend-java/portfolio/src/main/resources/application.properties` (added multipart size limits + `app.upload-dir=uploads`)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/config/WebConfig.java` (added `/uploads/**` static resource handler)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/config/SecurityConfig.java` (added `GET /uploads/**` permitAll rule)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/ImageUploadResponseDTO.java` (new — record with `url` field)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/ImageUploadService.java` (new — validates MIME type, saves file, returns URL)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/PostController.java` (added `/images` endpoint)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/GlobalExceptionHandler.java` (new — handles MaxUploadSizeExceededException globally)
+- **Learnings for future iterations:**
+  - `MaxUploadSizeExceededException` is thrown by Spring's `DispatcherServlet` before the controller — must be caught in `@RestControllerAdvice`, not `@ExceptionHandler` in the controller
+  - `WebConfig.addResourceHandlers()` requires absolute path with `file:` prefix: `"file:" + Paths.get(uploadDir).toAbsolutePath() + "/"`
+  - `SecurityConfig` needs explicit `GET /uploads/**` permitAll rule or uploaded files will return 401
+  - `file.transferTo(destination)` uses `Path` parameter (not `File`) — works correctly with NIO path
 ---
