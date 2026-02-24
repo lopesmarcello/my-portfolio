@@ -5,6 +5,8 @@
 - Spring Boot 4 uses `SecurityFilterChain` bean pattern, NOT `WebSecurityConfigurerAdapter` (deprecated)
 - jjwt 0.12.x uses `Jwts.builder()` / `Jwts.parser()` API (not `parserBuilder()` which is 0.11.x)
 - prd.json lives at `/workspace/scripts/prd.json`; progress.txt lives at `/workspace/scripts/progress.txt`
+- Admin credentials stored as env vars `ADMIN_USERNAME` / `ADMIN_PASSWORD` in application.properties (same pattern as JWT_SECRET)
+- Auth endpoint: `POST /api/auth/login` — body `{username, password}`, returns `{token}` or 401
 
 # Ralph Progress Log
 Started: Tue Feb 24 11:45:41 PST 2026
@@ -30,4 +32,19 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - jjwt 0.12.x: use `Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload()` (not `parserBuilder()`)
   - `Keys.hmacShaKeyFor(secret.getBytes())` creates a valid HS256 signing key — ensure secret is at least 32 chars (256 bits) at runtime
   - JwtService uses constructor injection with `@Value` — no field injection needed
+---
+
+## 2026-02-24 - US-003
+- Created `POST /api/auth/login` endpoint returning JWT on valid credentials, 401 on invalid
+- Files changed:
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/LoginRequestDTO.java` (new)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/LoginResponseDTO.java` (new)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java` (new)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/AuthController.java` (new)
+  - `backend-java/portfolio/src/main/resources/application.properties` (added admin.username/admin.password env var refs)
+- **Learnings for future iterations:**
+  - Admin credentials follow the same env var pattern as JWT_SECRET: `admin.username=${ADMIN_USERNAME}`, `admin.password=${ADMIN_PASSWORD}`
+  - AuthService uses field injection with `@Value` (Spring injects after construction since RequiredArgsConstructor only covers final fields); for `@Value` fields, field injection is simpler than constructor injection
+  - `AuthController` returns `ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()` (no body) on bad credentials
+  - At startup, Spring Boot will fail if ADMIN_USERNAME or ADMIN_PASSWORD env vars are not set — this is intentional
 ---
