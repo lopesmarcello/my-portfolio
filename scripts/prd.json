@@ -12,7 +12,7 @@
       "id": "US-002",
       "title": "Create JWT utility service",
       "description": "As a developer, I need a JWT utility class to generate and validate tokens so auth can be stateless.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

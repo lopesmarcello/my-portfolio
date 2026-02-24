@@ -20,3 +20,14 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - Spring Boot uses version 4.0.2 (latest). Security config must use `SecurityFilterChain` bean pattern.
   - jjwt version 0.12.6 is the latest 0.12.x release. The API uses `Jwts.parser()` not `Jwts.parserBuilder()`.
 ---
+
+## 2026-02-24 - US-002
+- Created `JwtService.java` in `com.lopesmarcello.portfolio.security` package
+- Added JWT config properties to `application.properties` (`jwt.secret=${JWT_SECRET}`, `jwt.expiration=86400000`)
+- Files changed: `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/security/JwtService.java`, `backend-java/portfolio/src/main/resources/application.properties`
+- **Learnings for future iterations:**
+  - `jwt.secret=${JWT_SECRET}` in application.properties causes Spring Boot to fail startup if JWT_SECRET env var is not set — no extra code needed
+  - jjwt 0.12.x: use `Jwts.parser().verifyWith(key).build().parseSignedClaims(token).getPayload()` (not `parserBuilder()`)
+  - `Keys.hmacShaKeyFor(secret.getBytes())` creates a valid HS256 signing key — ensure secret is at least 32 chars (256 bits) at runtime
+  - JwtService uses constructor injection with `@Value` — no field injection needed
+---
