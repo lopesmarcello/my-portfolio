@@ -1,9 +1,12 @@
 package com.lopesmarcello.portfolio.controllers;
 
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.lopesmarcello.portfolio.dtos.UpdateResumeRequestDTO;
 import com.lopesmarcello.portfolio.dtos.AddExperienceRequestDTO;
 import com.lopesmarcello.portfolio.dtos.ExperienceDTO;
+import com.lopesmarcello.portfolio.dtos.ReorderExperienceItemDTO;
 import com.lopesmarcello.portfolio.dtos.ResumeResponseDTO;
 import com.lopesmarcello.portfolio.dtos.UpdateExperienceRequestDTO;
 import com.lopesmarcello.portfolio.dtos.UpdateLinkRequestDTO;
@@ -56,6 +60,7 @@ public class ResumeController {
         experience.setDescription(dto.getDescription());
         experience.setStartDate(dto.getStartDate());
         experience.setEndDate(dto.getEndDate());
+        experience.setDisplayOrder(dto.getDisplayOrder());
 
         ExperienceEntity saved = service.addExperience(experience);
         ExperienceDTO responseDTO = ResumeMapper.convertExperienceDTO(saved);
@@ -78,11 +83,22 @@ public class ResumeController {
         experience.setDescription(dto.getDescription());
         experience.setStartDate(dto.getStartDate());
         experience.setEndDate(dto.getEndDate());
+        experience.setDisplayOrder(dto.getDisplayOrder());
 
         ExperienceEntity updated = service.updateExperience(id, experience);
         ExperienceDTO responseDTO = ResumeMapper.convertExperienceDTO(updated);
 
         return ResponseEntity.ok(responseDTO);
+    }
+
+    @PatchMapping("/experiences/reorder")
+    public ResponseEntity<List<ExperienceDTO>> reorderExperiences(
+            @RequestBody List<ReorderExperienceItemDTO> items) {
+        List<ExperienceEntity> updated = service.reorderExperiences(items);
+        List<ExperienceDTO> responseDTOs = updated.stream()
+                .map(ResumeMapper::convertExperienceDTO)
+                .toList();
+        return ResponseEntity.ok(responseDTOs);
     }
 
     @PutMapping("/links/{index}")

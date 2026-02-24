@@ -27,6 +27,7 @@ public class ExperienceEntity {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer displayOrder;
 
     @ManyToOne
     @JoinColumn(name = "resume_id")

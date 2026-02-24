@@ -45,6 +45,7 @@ public class ResumeMapper {
                 .description(entity.getDescription())
                 .startDate(entity.getStartDate())
                 .endDate(entity.getEndDate())
+                .displayOrder(entity.getDisplayOrder())
                 .build();
 
     }

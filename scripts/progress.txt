@@ -65,3 +65,29 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - No `UserDetailsService` or `PasswordEncoder` beans are needed when auth is handled manually via JWT filter
   - Spring Boot will log a random default user password warning but it's harmless since form login is not used
 ---
+
+## 2026-02-24 - US-005
+- Added `displayOrder` (Integer, nullable) field to `ExperienceEntity` — Hibernate `ddl-auto=update` will add the column automatically
+- Added `displayOrder` to `ExperienceDTO`, `AddExperienceRequestDTO`, `UpdateExperienceRequestDTO`
+- Created `ReorderExperienceItemDTO` for bulk reorder requests
+- Updated `ResumeMapper.convertExperienceDTO()` to include `displayOrder`
+- Updated `ResumeRepository.findExperiencesByResumeId()` query: orders by `displayOrder ASC NULLS LAST, startDate DESC`
+- Updated `ResumeService.updateExperience()` to persist `displayOrder`; added new `reorderExperiences(List<ReorderExperienceItemDTO>)` method
+- Added `PATCH /api/resume/experiences/reorder` endpoint to `ResumeController` for bulk reorder
+- Updated `POST /api/resume/experiences` and `PUT /api/resume/experiences/{id}` to accept/persist `displayOrder`
+- Files changed:
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/entities/ExperienceEntity.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/ExperienceDTO.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/AddExperienceRequestDTO.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/UpdateExperienceRequestDTO.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/dtos/ReorderExperienceItemDTO.java` (new)
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/mappers/ResumeMapper.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/repositories/ResumeRepository.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/ResumeService.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/ResumeController.java`
+- **Learnings for future iterations:**
+  - `ddl-auto=update` handles new nullable columns automatically — no migration script needed for nullable field additions
+  - JPQL CASE expression for nullable ordering: `ORDER BY CASE WHEN e.displayOrder IS NULL THEN 1 ELSE 0 END, e.displayOrder ASC, e.startDate DESC`
+  - Reorder endpoint uses `@PatchMapping` which avoids conflict with `@PutMapping("/experiences/{id}")`
+  - `PATCH /api/resume/experiences/reorder` accepts `List<ReorderExperienceItemDTO>` body: `[{id, displayOrder}, ...]`
+---

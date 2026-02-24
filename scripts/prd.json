@@ -30,7 +30,7 @@
       "id": "US-005",
       "title": "Add displayOrder field to Experience entity",
       "description": "As a developer, I need experiences to have an explicit order field so drag-and-drop reordering can be persisted.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-006",
