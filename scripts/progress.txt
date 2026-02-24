@@ -1,3 +1,20 @@
+## 2026-02-24 - US-013
+- Created `frontend/app/admin/(cms)/resume/page.tsx` — Resume management page with basic info editing, links management, and experience list with drag-and-drop reordering
+- Basic info section: fullName, title, email, phone, about — saved via `adminUpdateResume()` which also persists links in one call
+- Links section: add/remove/edit inline rows, same pattern as About page
+- Experiences section: collapsible rows with inline edit form, delete, and drag-and-drop reorder
+- Drag-and-drop: HTML5 Drag and Drop API — `draggable` attribute on rows, `onDragStart` stores index in ref, `onDragOver` reorders state for visual feedback, `onDrop` calls `adminReorderExperiences` to persist
+- New experience form: toggleable "Add" form at the bottom of experiences section; on save, reloads full resume to get server-assigned ID
+- Backend `ExperienceData` type in api.ts doesn't have `displayOrder` — cast with intersection type in page component: `(data.experiences as (typeof data.experiences[0] & { displayOrder?: number | null })[])`
+- Files changed:
+  - `frontend/app/admin/(cms)/resume/page.tsx` (new)
+  - `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (updated, gitignored)
+- **Learnings for future iterations:**
+  - HTML5 DnD reorder pattern: store `dragIndex` in a `useRef`, update array state on `onDragOver` (not just `onDrop`) for smooth visual feedback, auto-save on `onDrop`
+  - When backend adds fields to a DTO that the frontend type doesn't reflect, use intersection cast rather than modifying shared api.ts types unless needed by other components
+  - Resume info + links are updated together via a single `adminUpdateResume()` call — no separate endpoint for links
+---
+
 ## Codebase Patterns
 - Admin sidebar layout lives in `app/admin/(cms)/layout.tsx` (route group); `app/admin/layout.tsx` is a minimal pass-through so `/admin/login` only gets the root layout (no sidebar)
 - Next.js route groups: public pages live in `app/(public)/` (Header/Footer via `(public)/layout.tsx`); admin pages in `app/admin/` (no public chrome); root `app/layout.tsx` is minimal (html/body only)

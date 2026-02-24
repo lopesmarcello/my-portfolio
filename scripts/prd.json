@@ -78,7 +78,7 @@
       "id": "US-013",
       "title": "Create admin Resume management page",
       "description": "As the admin, I want to edit my resume data and reorder experiences with drag-and-drop so my CV page stays accurate.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-014",
