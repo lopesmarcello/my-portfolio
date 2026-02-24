@@ -66,7 +66,7 @@
       "id": "US-011",
       "title": "Create admin dashboard home page",
       "description": "As the admin, I want a simple dashboard landing page so I have a home base after logging in.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-012",

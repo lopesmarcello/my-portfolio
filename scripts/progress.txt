@@ -168,6 +168,18 @@ Started: Tue Feb 24 11:45:41 PST 2026
   - `usePathname()` from `next/navigation` gives the active route for sidebar highlighting
 ---
 
+## 2026-02-24 - US-011
+- Created `frontend/app/admin/(cms)/dashboard/page.tsx` — simple dashboard landing page with quick-link cards to About, Resume, and Posts sections
+- Updated `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` to add `/admin/dashboard` to AppRoutes, LayoutRoutes, ParamMap, and LayoutSlotMap
+- Files changed:
+  - `frontend/app/admin/(cms)/dashboard/page.tsx` (new)
+  - `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (updated, gitignored — updated locally for tsc)
+- **Learnings for future iterations:**
+  - Dashboard page lives under `app/admin/(cms)/dashboard/page.tsx` — automatically picks up the CMS sidebar layout
+  - `.next/` files are gitignored; only the source page file goes into the commit
+  - The dashboard is a server component (no `"use client"`) — just links and static content
+---
+
 ## 2026-02-24 - US-010
 - Created `frontend/app/admin/login/page.tsx` — login form with username/password, loading state, error display, redirects to `/admin/dashboard` on success
 - Restructured admin routing: moved sidebar to `app/admin/(cms)/layout.tsx` (route group); replaced `app/admin/layout.tsx` with a minimal pass-through
