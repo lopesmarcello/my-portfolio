@@ -1,10 +1,13 @@
 package com.lopesmarcello.portfolio.services;
 
 import com.lopesmarcello.portfolio.security.JwtService;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -16,6 +19,11 @@ public class AuthService {
 
     @Value("${admin.password}")
     private String adminPassword;
+
+    @PostConstruct
+    public void logAdminUsername() {
+        log.info("Admin username loaded: {}", adminUsername);
+    }
 
     /**
      * Validates credentials against the configured admin username/password.

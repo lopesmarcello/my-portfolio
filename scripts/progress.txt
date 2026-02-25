@@ -22,3 +22,13 @@ Started: Tue Feb 24 16:22:01 PST 2026
   - `.env.example` is committed to the repo but the actual `.env` file is excluded via `.gitignore`
   - The backend `.gitignore` did not previously exclude `.env` files — added `### Environment secrets ### .env` section
 ---
+
+## 2026-02-24 - US-001 (fix-admin-login)
+- What was implemented: Added `@PostConstruct` log to `AuthService` that prints the loaded `admin.username` at INFO level on startup, confirming `.env` loading. Added `@Slf4j` annotation and `jakarta.annotation.PostConstruct` import.
+- Files changed: `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java`
+- The `spring.config.import=optional:file:../.env[.properties]` path was verified correct: Maven runs from `backend-java/portfolio/`, so `../` resolves to `backend-java/` where `.env` lives.
+- **Learnings for future iterations:**
+  - `@Slf4j` + `@PostConstruct` is the standard Spring pattern for startup verification logs
+  - Never log the password — only log the username to confirm env var loading
+  - The `.env` file format (KEY=VALUE) is valid Java Properties format and loads correctly with `[.properties]` hint
+---
