@@ -12,7 +12,7 @@
       "id": "US-002",
       "title": "Create .env.example documenting required env vars",
       "description": "As a developer, I want a reference file listing all required environment variables so I know what to configure for production.",
-      "passes": false
+      "passes": true
     }
   ]
 }
