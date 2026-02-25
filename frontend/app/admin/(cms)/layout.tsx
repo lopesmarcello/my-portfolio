@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, User, FileText, BookOpen, LogOut } from "lucide-react";
+import { Toaster } from "sonner";
 import { clearAuthToken } from "@/lib/adminApi";
 
 const navItems = [
@@ -102,6 +103,8 @@ export default function AdminCmsLayout({ children }: { children: React.ReactNode
       <main className="flex-1 overflow-y-auto md:pt-0 pt-14">
         {children}
       </main>
+
+      <Toaster position="bottom-right" duration={4000} />
     </div>
   );
 }
