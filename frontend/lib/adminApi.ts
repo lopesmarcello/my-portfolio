@@ -271,6 +271,13 @@ export async function adminCreatePost(dto: CreatePostRequest): Promise<void> {
     if (!response.ok) throw new Error("Failed to create post");
 }
 
+export async function adminDeletePost(id: number): Promise<void> {
+    const response = await authFetch(`${API_URL}/posts/${id}`, {
+        method: "DELETE",
+    });
+    if (!response.ok) throw new Error("Failed to delete post");
+}
+
 export async function adminUpdatePost(id: number, dto: UpdatePostRequest): Promise<void> {
     const response = await authFetch(`${API_URL}/posts/${id}`, {
         method: "PATCH",
