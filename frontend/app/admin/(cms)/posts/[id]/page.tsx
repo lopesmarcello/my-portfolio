@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Check } from "lucide-react";
+import { ArrowLeft, Save, Check, Upload, X } from "lucide-react";
 import { getPost } from "@/lib/api";
-import { adminUpdatePost } from "@/lib/adminApi";
+import { adminUpdatePost, adminUploadImage } from "@/lib/adminApi";
 import RichTextEditor from "@/components/RichTextEditor";
 import type { Post } from "@/lib/api";
 
@@ -17,10 +17,13 @@ export default function EditPostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (isNaN(postId)) {
@@ -32,10 +35,27 @@ export default function EditPostPage() {
         setPost(data);
         setTitle(data.title);
         setContent(data.content);
+        setHeaderImageUrl(data.headerImageUrl ?? "");
       })
       .catch(() => setError("Failed to load post."))
       .finally(() => setLoading(false));
   }, [postId, router]);
+
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    try {
+      const url = await adminUploadImage(file);
+      setHeaderImageUrl(url);
+    } catch {
+      setError("Failed to upload image. Please try again.");
+    } finally {
+      setUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
 
   const handleSave = async () => {
     if (!title.trim()) {
@@ -46,7 +66,7 @@ export default function EditPostPage() {
     setError(null);
     setSaved(false);
     try {
-      await adminUpdatePost(postId, { title, content });
+      await adminUpdatePost(postId, { title, content, headerImageUrl: headerImageUrl || undefined });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
     } catch {
@@ -105,6 +125,49 @@ export default function EditPostPage() {
 
         <div>
           <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            Header Image
+          </label>
+          {headerImageUrl ? (
+            <div className="relative inline-block">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={headerImageUrl}
+                alt="Header preview"
+                className="h-40 w-full max-w-md object-cover rounded-lg border border-gray-300 dark:border-gray-600"
+              />
+              <button
+                type="button"
+                onClick={() => setHeaderImageUrl("")}
+                className="absolute top-1.5 right-1.5 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
+                title="Remove image"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ) : (
+            <div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleImageChange}
+                className="hidden"
+                id="header-image-edit"
+              />
+              <label
+                htmlFor="header-image-edit"
+                className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg cursor-pointer transition-colors"
+              >
+                <Upload size={15} />
+                {uploading ? "Uploading…" : "Upload Image"}
+              </label>
+              <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">JPEG, PNG, GIF or WebP. Max 10 MB.</p>
+            </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
             Content
           </label>
           {/* key forces re-mount only when the post id changes so the editor initializes with the loaded content */}
@@ -121,7 +184,7 @@ export default function EditPostPage() {
         </Link>
         <button
           onClick={handleSave}
-          disabled={saving}
+          disabled={saving || uploading}
           className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-60 rounded-lg transition-colors"
         >
           {saved ? <Check size={15} /> : <Save size={15} />}
