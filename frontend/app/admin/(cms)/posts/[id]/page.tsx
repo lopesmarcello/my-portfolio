@@ -64,9 +64,9 @@ export default function EditPostPage() {
     try {
       await adminUpdatePost(postId, { title, content, headerImageUrl: headerImageUrl || undefined });
       toast.success("Post updated successfully");
+      router.push("/admin/posts");
     } catch {
       toast.error("Failed to save post. Please try again.");
-    } finally {
       setSaving(false);
     }
   };

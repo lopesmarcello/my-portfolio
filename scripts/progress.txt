@@ -9,6 +9,14 @@
 Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
+## 2026-02-25 - US-009
+- New post page: changed router.push to /admin/posts after successful create (was /admin/posts/${id})
+- Edit post page: added router.push("/admin/posts") after successful update; moved setSaving(false) to catch only
+- Toast fires before router.push so it persists on the list page via sonner's toast state
+- Files changed: frontend/app/admin/(cms)/posts/new/page.tsx, frontend/app/admin/(cms)/posts/[id]/page.tsx
+- Ran typecheck: passes
+---
+
 ## 2026-02-25 - US-008
 - Posts list page: added toast.error on load failure, toast.success("Post deleted successfully") on delete, removed inline error div
 - New post page: added toast.success("Post created successfully") on create, toast.error on failures, removed inline error div and error state

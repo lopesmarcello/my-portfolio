@@ -39,9 +39,9 @@ export default function NewPostPage() {
     }
     setSaving(true);
     try {
-      const { id } = await adminCreatePost({ title, content, headerImageUrl: headerImageUrl || undefined });
+      await adminCreatePost({ title, content, headerImageUrl: headerImageUrl || undefined });
       toast.success("Post created successfully");
-      router.push(`/admin/posts/${id}`);
+      router.push("/admin/posts");
     } catch {
       toast.error("Failed to create post. Please try again.");
       setSaving(false);
