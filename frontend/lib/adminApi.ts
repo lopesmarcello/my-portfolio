@@ -263,12 +263,14 @@ export async function adminUpdateResumeLink(index: number, dto: LinkRequest): Pr
 // Posts admin endpoints
 // ---------------------------------------------------------------------------
 
-export async function adminCreatePost(dto: CreatePostRequest): Promise<void> {
+export async function adminCreatePost(dto: CreatePostRequest): Promise<{ id: number }> {
     const response = await authFetch(`${API_URL}/posts/`, {
         method: "POST",
         body: JSON.stringify(dto),
     });
     if (!response.ok) throw new Error("Failed to create post");
+    const data = await response.json();
+    return { id: data.id };
 }
 
 export async function adminDeletePost(id: number): Promise<void> {
