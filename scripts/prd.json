@@ -7,7 +7,7 @@
       "id": "US-001",
       "title": "Install and configure dependencies",
       "description": "Install isomorphic-dompurify and @tailwindcss/typography, then register the typography plugin in globals.css.",
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "isomorphic-dompurify is added to frontend/package.json dependencies",
         "@tailwindcss/typography is added to frontend/package.json dependencies",
@@ -19,7 +19,7 @@
       "id": "US-002",
       "title": "Sanitize and render post content on the single post page",
       "description": "Sanitize post.content with isomorphic-dompurify and render via dangerouslySetInnerHTML with prose Tailwind classes.",
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "post.content is sanitized using isomorphic-dompurify's sanitize() before being passed to the DOM",
         "The content container uses dangerouslySetInnerHTML={{ __html: sanitizedHtml }} to render the HTML",

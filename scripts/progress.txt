@@ -1,3 +1,28 @@
 # Ralph Progress Log
-Started: Wed Feb 25 05:54:45 PST 2026
+Started: Wed Feb 25 06:55:55 PST 2026
+---
+
+## Codebase Patterns
+- Tailwind CSS v4 uses `@plugin "..."` in globals.css (NOT tailwind.config.js) to register plugins
+- The project uses pnpm in the frontend/ directory
+- Pre-existing lint errors exist in curriculum/page.tsx and page.tsx (unescaped entities) — do not worry about these
+- The single post page (/content/[id]/page.tsx) is a "use client" component
+- PostCard.tsx uses `generateExcerpt()` from `@/lib/utils` for excerpt generation
+
+## 2026-02-25 - US-002
+- What was implemented: Sanitized post.content with DOMPurify.sanitize() and rendered via dangerouslySetInnerHTML; applied prose prose-lg dark:prose-invert classes; removed whitespace-pre-wrap
+- Files changed: frontend/app/(public)/content/[id]/page.tsx
+- **Learnings for future iterations:**
+  - The page is "use client" so isomorphic-dompurify works fine (it's isomorphic for a reason)
+  - Replace the entire inner div with a self-closing div using dangerouslySetInnerHTML — cleaner approach
+  - prose-lg is added to the outer content wrapper alongside existing prose dark:prose-invert
+---
+
+## 2026-02-25 - US-001
+- What was implemented: Installed isomorphic-dompurify and @tailwindcss/typography; registered typography plugin in globals.css; created scripts/prd.json for ralph agent tracking
+- Files changed: frontend/package.json, frontend/pnpm-lock.yaml, frontend/app/globals.css, scripts/prd.json
+- **Learnings for future iterations:**
+  - Tailwind CSS v4 registers plugins via `@plugin "@tailwindcss/typography"` in globals.css (not tailwind.config.js)
+  - isomorphic-dompurify works in both Node.js SSR and browser, unlike regular dompurify
+  - The .next/types/validator.ts typecheck error is pre-existing and unrelated to our changes
 ---
