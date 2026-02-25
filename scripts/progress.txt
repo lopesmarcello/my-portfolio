@@ -1,53 +1,21 @@
 # Ralph Progress Log
-Started: Tue Feb 24 16:47:39 PST 2026
+Started: Wed Feb 25 04:40:59 PST 2026
 ---
 
 ## Codebase Patterns
-- Frontend error handling: Use typed Error subclasses (e.g. `InvalidCredentialsError extends Error`) in `lib/adminApi.ts` and import them into page components for `instanceof` checks
-- TypeScript tsc errors in `.next/types/validator.ts` are from stale build cache and are pre-existing (not caused by source edits) — run `pnpm lint` on specific files to confirm source changes are clean
-- Pre-existing lint errors exist in `components/Header.tsx`, `components/LiquidEther.jsx`, `app/(public)/curriculum/page.tsx`, `app/(public)/page.tsx` — do NOT fix these unless specifically tasked
-- Backend tests: use `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`. H2 in-memory DB configured in `src/test/resources/application-test.properties`. Profile-specific properties override `.env` imports.
-- Backend JWT test: to build an expired token in a test, use `Jwts.builder()` directly with `Keys.hmacShaKeyFor(jwtSecret.getBytes())` and `expiration(new Date(System.currentTimeMillis() - N))`
-- Maven/Java are NOT available in this dev container — `mvn test` must be run manually by the developer after changes
+- `spring.config.import` in `application.properties` resolves paths relative to the process working directory (where `mvn` is run), NOT relative to `application.properties` itself.
+- When running `mvn spring-boot:run` from `backend-java/portfolio/`, use `optional:file:.env[.properties]` (not `../.env`) to reference a `.env` file in that same directory.
+- The `[.properties]` extension hint tells Spring to parse `.env` as Java properties format (`KEY=VALUE`), compatible with standard `.env` syntax (no `export`, no shell quoting, no `$VAR` references).
 
-## 2026-02-24 - US-003
-- Implemented typed error classes `InvalidCredentialsError` and `ServerError` in `frontend/lib/adminApi.ts`
-- Updated `adminLogin()` to catch network failures separately from HTTP 401 responses and throw the appropriate typed error
-- Updated `frontend/app/admin/login/page.tsx` to use `instanceof InvalidCredentialsError` to show "Invalid username or password." for 401 vs "Could not reach the server. Please try again." for network/5xx errors
-- Files changed: `frontend/lib/adminApi.ts`, `frontend/app/admin/login/page.tsx`, `scripts/prd.json`, `scripts/progress.txt`
-- **Learnings for future iterations:**
-  - `adminLogin()` in `lib/adminApi.ts` is the single place for all auth HTTP calls; error types are co-located there
-  - Login page at `app/admin/login/page.tsx` catches errors from `adminLogin()` and maps them to user-facing messages
-  - The `.next` directory causes false tsc errors due to stale type cache; use `pnpm eslint <file>` to check only modified source files
 ---
 
-## 2026-02-24 - US-004
-- Added H2 dependency to `pom.xml` (test scope) to enable database-free integration tests
-- Created `src/test/resources/application-test.properties` configuring H2 in-memory DB, test JWT secret, and `admin`/`admin` credentials
-- Added `@ActiveProfiles("test")` to existing `PortfolioApplicationTests` so it uses H2 instead of PostgreSQL
-- Created `AuthControllerTest.java` with 6 tests covering: login success (200+token), login failure (401), `/me` with valid token (200+username), `/me` with no token (401), `/me` with expired token (401), `/me` with invalid token (401)
-- Files changed: `backend-java/portfolio/pom.xml`, `backend-java/portfolio/src/test/resources/application-test.properties`, `backend-java/portfolio/src/test/java/.../PortfolioApplicationTests.java`, `backend-java/portfolio/src/test/java/.../AuthControllerTest.java`, `scripts/prd.json`, `scripts/progress.txt`
+## 2026-02-25 - US-001
+- Investigated root cause of `spring.config.import` not loading `.env`
+- Root cause: `../.env` resolves to `backend-java/.env` (doesn't exist) when running from `backend-java/portfolio/`. The `.env` file is actually at `backend-java/portfolio/.env`.
+- Documented the root cause with a comment in `application.properties` above the `spring.config.import` line
+- Files changed: `backend-java/portfolio/src/main/resources/application.properties`, `scripts/prd.json`, `scripts/progress.txt`
 - **Learnings for future iterations:**
-  - Maven and Java are not available in this environment; tests were written and code-reviewed but not executed — developer must run `./mvnw test` from `backend-java/portfolio/` to confirm
-  - `application-test.properties` (profile-specific) has higher precedence than `application.properties` and its `spring.config.import` imports, so test credentials safely override any `.env` file
-  - `JwtService` requires `jwt.secret` to be at least 32 bytes for HMAC-SHA256 signing
----
-
-## 2026-02-24 - US-005
-- No code changes required — US-005 is a manual end-to-end verification story
-- All code changes for the complete login flow were implemented in US-001 through US-004
-- Browser testing tools (dev-browser skill, MCP) are not available in this environment; manual verification is required
-- **Manual verification checklist for developer:**
-  1. Start backend: `cd backend-java/portfolio && ./mvnw spring-boot:run`
-  2. Start frontend: `cd frontend && pnpm dev`
-  3. Navigate to `http://localhost:3000/admin/login`
-  4. Enter `.env` credentials → verify redirect to `/admin/dashboard`
-  5. Refresh `/admin/dashboard` → verify user stays on dashboard
-  6. Navigate to `/admin/login` while logged in → verify redirect to `/admin/dashboard`
-  7. Click Logout → verify redirect to `/admin/login`
-  8. Enter wrong credentials → verify "Invalid username or password." error
-  9. Stop backend, attempt login → verify "Could not reach the server. Please try again." error
-- Files changed: `scripts/prd.json`, `scripts/progress.txt`
-- **Learnings for future iterations:**
-  - US-005 is a verification story — no code is needed, just a checklist. Mark passes: true once all prior stories are implemented and manual verification has been confirmed
+  - The `.env` file lives at `backend-java/portfolio/.env` — one level deeper than the broken path suggested
+  - Fix for US-002 is simply changing `../.env` to `.env` in `spring.config.import`
+  - `AuthService` still has `System.out.println` statements to remove (US-003)
 ---
