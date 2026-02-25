@@ -2,7 +2,7 @@
 
 import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { adminLogin } from "@/lib/adminApi";
+import { adminLogin, InvalidCredentialsError } from "@/lib/adminApi";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -18,8 +18,12 @@ export default function AdminLoginPage() {
     try {
       await adminLogin(username, password);
       router.push("/admin/dashboard");
-    } catch {
-      setError("Invalid credentials");
+    } catch (err) {
+      if (err instanceof InvalidCredentialsError) {
+        setError("Invalid username or password.");
+      } else {
+        setError("Could not reach the server. Please try again.");
+      }
     } finally {
       setLoading(false);
     }

@@ -18,7 +18,7 @@
       "id": "US-003",
       "title": "Distinguish credential errors from server errors in the login UI",
       "description": "As an admin user, I want to see a clear error message that tells me whether my credentials were wrong or whether there was a server/connection problem, so I know whether to retry with different credentials or check the backend.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-004",

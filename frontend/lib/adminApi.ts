@@ -116,16 +116,40 @@ export interface UpdatePostRequest {
 }
 
 // ---------------------------------------------------------------------------
+// Auth error types
+// ---------------------------------------------------------------------------
+
+export class InvalidCredentialsError extends Error {
+    constructor() {
+        super("Invalid username or password.");
+        this.name = "InvalidCredentialsError";
+    }
+}
+
+export class ServerError extends Error {
+    constructor() {
+        super("Could not reach the server. Please try again.");
+        this.name = "ServerError";
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Auth endpoints
 // ---------------------------------------------------------------------------
 
 export async function adminLogin(username: string, password: string): Promise<void> {
-    const response = await fetch(`${API_URL}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
-    });
-    if (!response.ok) throw new Error("Invalid credentials");
+    let response: Response;
+    try {
+        response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+        });
+    } catch {
+        throw new ServerError();
+    }
+    if (response.status === 401) throw new InvalidCredentialsError();
+    if (!response.ok) throw new ServerError();
     const data: { token: string } = await response.json();
     setAuthToken(data.token);
 }

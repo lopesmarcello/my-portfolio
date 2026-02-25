@@ -1,44 +1,19 @@
-## Codebase Patterns
-- Spring `${VAR:default}` syntax provides env var fallbacks in `application.properties` — no extra config needed
-- Backend `.gitignore` is at `backend-java/portfolio/.gitignore` — add `.env` there for secret file exclusion
----
-
 # Ralph Progress Log
-Started: Tue Feb 24 16:22:01 PST 2026
+Started: Tue Feb 24 16:47:39 PST 2026
 ---
 
-## 2026-02-24 - US-001
-- What was implemented: Added fallback defaults to `application.properties` for all three required env vars using Spring's `${VAR:default}` syntax. JWT secret fallback is 41 chars (meets HMAC-SHA256 minimum of 32).
-- Files changed: `backend-java/portfolio/src/main/resources/application.properties`
-- **Learnings for future iterations:**
-  - Spring `${VAR:default}` is all that's needed — no profiles or extra dependencies required
-  - JWT secret fallback must be ≥32 characters to satisfy `Keys.hmacShaKeyFor()` minimum key length
----
+## Codebase Patterns
+- Frontend error handling: Use typed Error subclasses (e.g. `InvalidCredentialsError extends Error`) in `lib/adminApi.ts` and import them into page components for `instanceof` checks
+- TypeScript tsc errors in `.next/types/validator.ts` are from stale build cache and are pre-existing (not caused by source edits) — run `pnpm lint` on specific files to confirm source changes are clean
+- Pre-existing lint errors exist in `components/Header.tsx`, `components/LiquidEther.jsx`, `app/(public)/curriculum/page.tsx`, `app/(public)/page.tsx` — do NOT fix these unless specifically tasked
 
-## 2026-02-24 - US-002
-- What was implemented: Created `.env.example` documenting required env vars for production. Added `.env` to backend `.gitignore`.
-- Files changed: `backend-java/portfolio/.env.example` (new), `backend-java/portfolio/.gitignore`
+## 2026-02-24 - US-003
+- Implemented typed error classes `InvalidCredentialsError` and `ServerError` in `frontend/lib/adminApi.ts`
+- Updated `adminLogin()` to catch network failures separately from HTTP 401 responses and throw the appropriate typed error
+- Updated `frontend/app/admin/login/page.tsx` to use `instanceof InvalidCredentialsError` to show "Invalid username or password." for 401 vs "Could not reach the server. Please try again." for network/5xx errors
+- Files changed: `frontend/lib/adminApi.ts`, `frontend/app/admin/login/page.tsx`, `scripts/prd.json`, `scripts/progress.txt`
 - **Learnings for future iterations:**
-  - `.env.example` is committed to the repo but the actual `.env` file is excluded via `.gitignore`
-  - The backend `.gitignore` did not previously exclude `.env` files — added `### Environment secrets ### .env` section
----
-
-## 2026-02-24 - US-001 (fix-admin-login)
-- What was implemented: Added `@PostConstruct` log to `AuthService` that prints the loaded `admin.username` at INFO level on startup, confirming `.env` loading. Added `@Slf4j` annotation and `jakarta.annotation.PostConstruct` import.
-- Files changed: `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java`
-- The `spring.config.import=optional:file:../.env[.properties]` path was verified correct: Maven runs from `backend-java/portfolio/`, so `../` resolves to `backend-java/` where `.env` lives.
-- **Learnings for future iterations:**
-  - `@Slf4j` + `@PostConstruct` is the standard Spring pattern for startup verification logs
-  - Never log the password — only log the username to confirm env var loading
-  - The `.env` file format (KEY=VALUE) is valid Java Properties format and loads correctly with `[.properties]` hint
----
-
-## 2026-02-24 - US-002 (fix-admin-login)
-- What was implemented: Added `GET /api/auth/me` endpoint to `AuthController` returning `{ "username": "..." }`. Created `MeResponseDTO`. Fixed `SecurityConfig` to add specific authenticated rule for `GET /api/auth/me` BEFORE the general `GET /api/**` permitAll rule. Added `authenticationEntryPoint` to return 401 (not 403) for unauthenticated REST requests.
-- Files changed: `controllers/AuthController.java`, `config/SecurityConfig.java`, `dtos/MeResponseDTO.java` (new)
-- **Learnings for future iterations:**
-  - Spring Security rules are matched in ORDER — add specific rules BEFORE general wildcards
-  - `GET /api/**` permitAll would silently allow GET /api/auth/me without a token; specific rule must precede it
-  - Configure `authenticationEntryPoint` to return 401 (not the default 403) for REST API JWT auth failures
-  - The `Authentication` parameter in a controller method is auto-populated by Spring Security from SecurityContext
+  - `adminLogin()` in `lib/adminApi.ts` is the single place for all auth HTTP calls; error types are co-located there
+  - Login page at `app/admin/login/page.tsx` catches errors from `adminLogin()` and maps them to user-facing messages
+  - The `.next` directory causes false tsc errors due to stale type cache; use `pnpm eslint <file>` to check only modified source files
 ---
