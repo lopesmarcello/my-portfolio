@@ -4,6 +4,10 @@
 - sonner Toaster goes in the CMS layout (app/admin/(cms)/layout.tsx) with `position="bottom-right" duration={4000}`
 - Admin CMS layout is at frontend/app/admin/(cms)/layout.tsx — it's the shared shell with sidebar and mobile nav
 - Admin root layout is at frontend/app/admin/layout.tsx — thin wrapper, good place for ThemeProvider
+- Toast pattern: remove error/success state vars, use `toast.success/error` directly in catch/try
+- Form input dark mode pattern: `border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white`
+- Edit/view toggle: use isEditing state, two separate return blocks; set isEditing=false on save success
+- next-themes: ThemeProvider needs "use client" directive; attribute="class" + enableSystem for OS-aware mode
 
 # Ralph Progress Log
 Started: Wed Feb 25 09:25:27 PST 2026
