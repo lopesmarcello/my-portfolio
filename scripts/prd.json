@@ -30,7 +30,7 @@
       "id": "US-005",
       "title": "End-to-end verification of the complete login flow",
       "description": "As a developer, I want to manually verify that an admin can log in, stay on the dashboard, and have their session correctly rejected after logout, so that I'm confident the full flow works before shipping.",
-      "passes": false
+      "passes": true
     }
   ]
 }

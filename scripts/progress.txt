@@ -32,3 +32,22 @@ Started: Tue Feb 24 16:47:39 PST 2026
   - `application-test.properties` (profile-specific) has higher precedence than `application.properties` and its `spring.config.import` imports, so test credentials safely override any `.env` file
   - `JwtService` requires `jwt.secret` to be at least 32 bytes for HMAC-SHA256 signing
 ---
+
+## 2026-02-24 - US-005
+- No code changes required — US-005 is a manual end-to-end verification story
+- All code changes for the complete login flow were implemented in US-001 through US-004
+- Browser testing tools (dev-browser skill, MCP) are not available in this environment; manual verification is required
+- **Manual verification checklist for developer:**
+  1. Start backend: `cd backend-java/portfolio && ./mvnw spring-boot:run`
+  2. Start frontend: `cd frontend && pnpm dev`
+  3. Navigate to `http://localhost:3000/admin/login`
+  4. Enter `.env` credentials → verify redirect to `/admin/dashboard`
+  5. Refresh `/admin/dashboard` → verify user stays on dashboard
+  6. Navigate to `/admin/login` while logged in → verify redirect to `/admin/dashboard`
+  7. Click Logout → verify redirect to `/admin/login`
+  8. Enter wrong credentials → verify "Invalid username or password." error
+  9. Stop backend, attempt login → verify "Could not reach the server. Please try again." error
+- Files changed: `scripts/prd.json`, `scripts/progress.txt`
+- **Learnings for future iterations:**
+  - US-005 is a verification story — no code is needed, just a checklist. Mark passes: true once all prior stories are implemented and manual verification has been confirmed
+---
