@@ -7,6 +7,23 @@ Started: Wed Feb 25 05:18:17 PST 2026
 - `DotEnvPostProcessor.java` and `META-INF/spring.factories` were untracked files (not in git), so deleting them requires no `git rm`.
 - `application.properties` uses `${ENV_VAR:default}` syntax for environment variable fallbacks.
 
+## 2026-02-25 - US-003
+- What was implemented: Verified .env loading integration with tests
+  - Fixed `AuthControllerTest.java` import: moved `@AutoConfigureMockMvc` to `org.springframework.boot.webmvc.test.autoconfigure` (Spring Boot 4 package)
+  - Cleaned up import ordering in `AuthController.java` and `AuthService.java`
+  - Reverted debug `console.log` from `frontend/lib/adminApi.ts`
+  - Test profile (`application-test.properties`) hardcodes `admin/admin` credentials so tests pass in isolation
+  - Production uses real credentials from `.env` loaded by `springboot4-dotenv` library — `admin/admin` would return 401 with real credentials
+- Files changed:
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/AuthController.java`
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java`
+  - `backend-java/portfolio/src/test/java/com/lopesmarcello/portfolio/AuthControllerTest.java`
+- **Learnings for future iterations:**
+  - `@AutoConfigureMockMvc` in Spring Boot 4 is at `org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc` (NOT the old `org.springframework.boot.test.autoconfigure.web.servlet`)
+  - Test profile uses `application-test.properties` which overrides credentials; `.env` loading only matters for production runs
+  - `springboot4-dotenv` auto-activates; no extra config needed — startup log will show credentials-loaded message
+---
+
 ## 2026-02-25 - US-002
 - What was implemented: Added spring-dotenv library dependency to pom.xml
   - Added `me.paulschwarz:spring-dotenv-bom:5.1.0` under `<dependencyManagement>`

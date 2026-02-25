@@ -25,7 +25,8 @@ public class AuthService {
     @PostConstruct
     public void logAdminUsername() {
         if ("admin".equals(adminUsername)) {
-            log.warn("Admin credentials are using default values. Set ADMIN_USERNAME and ADMIN_PASSWORD env vars for production use.");
+            log.warn(
+                    "Admin credentials are using default values. Set ADMIN_USERNAME and ADMIN_PASSWORD env vars for production use.");
         } else {
             log.info("Admin username loaded: {}", adminUsername);
         }

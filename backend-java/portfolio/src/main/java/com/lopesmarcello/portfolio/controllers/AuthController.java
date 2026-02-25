@@ -1,11 +1,5 @@
 package com.lopesmarcello.portfolio.controllers;
 
-import com.lopesmarcello.portfolio.dtos.LoginRequestDTO;
-import com.lopesmarcello.portfolio.dtos.LoginResponseDTO;
-import com.lopesmarcello.portfolio.dtos.MeResponseDTO;
-import com.lopesmarcello.portfolio.services.AuthService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +8,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.lopesmarcello.portfolio.dtos.LoginRequestDTO;
+import com.lopesmarcello.portfolio.dtos.LoginResponseDTO;
+import com.lopesmarcello.portfolio.dtos.MeResponseDTO;
+import com.lopesmarcello.portfolio.services.AuthService;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/auth")

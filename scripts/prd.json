@@ -41,7 +41,7 @@
         "POST /api/auth/login with admin/admin credentials returns 401 (verified by test)"
       ],
       "priority": 3,
-      "passes": false,
+      "passes": true,
       "notes": ""
     }
   ]
