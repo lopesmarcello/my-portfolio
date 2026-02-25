@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { ChevronDown, ChevronUp, GripVertical, Plus, Trash2 } from "lucide-react";
 import { getResume } from "@/lib/api";
 import {
@@ -44,12 +45,9 @@ export default function ResumeAdminPage() {
   const [links, setLinks] = useState<Link[]>([]);
   const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
   const [savingInfo, setSavingInfo] = useState(false);
-  const [infoError, setInfoError] = useState<string | null>(null);
-  const [infoSuccess, setInfoSuccess] = useState(false);
   const [newExp, setNewExp] = useState(emptyNewExp);
   const [showAddForm, setShowAddForm] = useState(false);
   const [addingExp, setAddingExp] = useState(false);
-  const [addExpError, setAddExpError] = useState<string | null>(null);
   const [reordering, setReordering] = useState(false);
 
   const dragIndex = useRef<number | null>(null);
@@ -76,7 +74,7 @@ export default function ResumeAdminPage() {
         }))
       );
     } catch {
-      setInfoError("Failed to load resume data.");
+      toast.error("Failed to load resume data.");
     } finally {
       setLoading(false);
     }
@@ -86,33 +84,27 @@ export default function ResumeAdminPage() {
 
   const handleInfoField = (field: keyof InfoState, value: string) => {
     setInfo((prev) => ({ ...prev, [field]: value }));
-    setInfoSuccess(false);
   };
 
   const handleLinkField = (index: number, field: keyof Link, value: string) => {
     setLinks((prev) => prev.map((l, i) => (i === index ? { ...l, [field]: value } : l)));
-    setInfoSuccess(false);
   };
 
   const addLink = () => {
     setLinks((prev) => [...prev, { label: "", url: "" }]);
-    setInfoSuccess(false);
   };
 
   const removeLink = (index: number) => {
     setLinks((prev) => prev.filter((_, i) => i !== index));
-    setInfoSuccess(false);
   };
 
   const handleSaveInfo = async () => {
     setSavingInfo(true);
-    setInfoError(null);
-    setInfoSuccess(false);
     try {
       await adminUpdateResume({ ...info, links });
-      setInfoSuccess(true);
+      toast.success("Resume saved successfully");
     } catch {
-      setInfoError("Failed to save resume info. Please try again.");
+      toast.error("Failed to save resume. Please try again.");
     } finally {
       setSavingInfo(false);
     }
@@ -147,7 +139,7 @@ export default function ResumeAdminPage() {
       );
     } catch {
       setExperiences((prev) => prev.map((e) => (e.id === exp.id ? { ...e, saving: false } : e)));
-      alert("Failed to save experience.");
+      toast.error("Failed to save resume. Please try again.");
     }
   };
 
@@ -157,13 +149,12 @@ export default function ResumeAdminPage() {
       await adminRemoveExperience(id);
       setExperiences((prev) => prev.filter((e) => e.id !== id));
     } catch {
-      alert("Failed to delete experience.");
+      toast.error("Failed to delete experience.");
     }
   };
 
   const handleAddExp = async () => {
     setAddingExp(true);
-    setAddExpError(null);
     try {
       await adminAddExperience({
         companyName: newExp.companyName,
@@ -175,8 +166,9 @@ export default function ResumeAdminPage() {
       await loadResume();
       setNewExp(emptyNewExp);
       setShowAddForm(false);
+      toast.success("Resume saved successfully");
     } catch {
-      setAddExpError("Failed to add experience. Please try again.");
+      toast.error("Failed to save resume. Please try again.");
     } finally {
       setAddingExp(false);
     }
@@ -209,7 +201,7 @@ export default function ResumeAdminPage() {
       await adminReorderExperiences(items);
       setExperiences((prev) => prev.map((e, i) => ({ ...e, displayOrder: i })));
     } catch {
-      alert("Failed to save order. Please try again.");
+      toast.error("Failed to save order. Please try again.");
     } finally {
       setReordering(false);
     }
@@ -223,17 +215,6 @@ export default function ResumeAdminPage() {
     <div className="p-8 max-w-3xl">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Resume</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Edit your CV data and reorder experiences.</p>
-
-      {infoError && (
-        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm">
-          {infoError}
-        </div>
-      )}
-      {infoSuccess && (
-        <div className="mb-6 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-sm">
-          Saved successfully.
-        </div>
-      )}
 
       {/* Basic Info */}
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
@@ -473,9 +454,6 @@ export default function ResumeAdminPage() {
         {showAddForm && (
           <div className="mt-4 p-4 rounded-lg border border-dashed border-gray-300 dark:border-gray-600 space-y-3">
             <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">New Experience</h3>
-            {addExpError && (
-              <p className="text-xs text-red-600 dark:text-red-400">{addExpError}</p>
-            )}
             <div>
               <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Company Name</label>
               <input
@@ -518,7 +496,7 @@ export default function ResumeAdminPage() {
             </div>
             <div className="flex justify-end gap-2">
               <button
-                onClick={() => { setShowAddForm(false); setNewExp(emptyNewExp); setAddExpError(null); }}
+                onClick={() => { setShowAddForm(false); setNewExp(emptyNewExp); }}
                 className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
               >
                 Cancel

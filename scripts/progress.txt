@@ -9,6 +9,19 @@
 Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
+## 2026-02-25 - US-007
+- Added `import { toast } from "sonner"` to Resume page
+- Removed infoError, infoSuccess, addExpError state variables
+- Updated handleSaveInfo: toast.success/error
+- Updated handleSaveExp: toast.error on failure
+- Updated handleDeleteExp: toast.error on failure
+- Updated handleAddExp: toast.success on success, toast.error on failure
+- Updated handleDrop: toast.error on failure
+- Removed inline alert divs and inline error paragraph for addExpError from JSX
+- Files changed: frontend/app/admin/(cms)/resume/page.tsx
+- Ran typecheck: passes
+---
+
 ## 2026-02-25 - US-006
 - Added `import { toast } from "sonner"` to About page
 - Removed `error` and `success` state variables
