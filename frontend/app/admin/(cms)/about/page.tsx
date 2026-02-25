@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { getAbout } from "@/lib/api";
 import { adminUpdateAbout } from "@/lib/adminApi";
@@ -28,8 +29,6 @@ export default function AboutAdminPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const techDragIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -44,13 +43,12 @@ export default function AboutAdminPage() {
           links: data.links.map((l) => ({ ...l })),
         });
       })
-      .catch(() => setError("Failed to load About data."))
+      .catch(() => toast.error("Failed to load About data."))
       .finally(() => setLoading(false));
   }, []);
 
   const handleField = (field: keyof Pick<FormState, "name" | "title" | "description" | "aboutText">, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
-    setSuccess(false);
   };
 
   // Technologies
@@ -61,7 +59,6 @@ export default function AboutAdminPage() {
       );
       return { ...prev, technologies };
     });
-    setSuccess(false);
   };
 
   const addTechnology = () => {
@@ -69,7 +66,6 @@ export default function AboutAdminPage() {
       ...prev,
       technologies: [...prev.technologies, { name: "", imageUrl: "" }],
     }));
-    setSuccess(false);
   };
 
   const removeTechnology = (index: number) => {
@@ -77,7 +73,6 @@ export default function AboutAdminPage() {
       ...prev,
       technologies: prev.technologies.filter((_, i) => i !== index),
     }));
-    setSuccess(false);
   };
 
   const handleTechDragStart = (index: number) => {
@@ -95,7 +90,6 @@ export default function AboutAdminPage() {
       return { ...prev, technologies };
     });
     techDragIndex.current = overIndex;
-    setSuccess(false);
   };
 
   const handleTechDrop = () => {
@@ -110,7 +104,6 @@ export default function AboutAdminPage() {
       );
       return { ...prev, links };
     });
-    setSuccess(false);
   };
 
   const addLink = () => {
@@ -118,7 +111,6 @@ export default function AboutAdminPage() {
       ...prev,
       links: [...prev.links, { label: "", url: "" }],
     }));
-    setSuccess(false);
   };
 
   const removeLink = (index: number) => {
@@ -126,18 +118,15 @@ export default function AboutAdminPage() {
       ...prev,
       links: prev.links.filter((_, i) => i !== index),
     }));
-    setSuccess(false);
   };
 
   const handleSave = async () => {
     setSaving(true);
-    setError(null);
-    setSuccess(false);
     try {
       await adminUpdateAbout(form);
-      setSuccess(true);
+      toast.success("About saved successfully");
     } catch {
-      setError("Failed to save. Please try again.");
+      toast.error("Failed to save about. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -153,18 +142,6 @@ export default function AboutAdminPage() {
     <div className="p-8 max-w-3xl">
       <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">About</h1>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Edit your bio, tech stack, and social links.</p>
-
-      {error && (
-        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
-      )}
-
-      {success && (
-        <div className="mb-6 px-4 py-3 rounded-lg bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 text-sm">
-          Saved successfully.
-        </div>
-      )}
 
       {/* Bio */}
       <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
