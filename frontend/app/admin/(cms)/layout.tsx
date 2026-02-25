@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, User, FileText, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, User, FileText, BookOpen, LogOut, Sun, Moon } from "lucide-react";
 import { Toaster } from "sonner";
+import { useTheme } from "next-themes";
 import { clearAuthToken } from "@/lib/adminApi";
 
 const navItems = [
@@ -16,10 +17,15 @@ const navItems = [
 export default function AdminCmsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { theme, setTheme } = useTheme();
 
   const handleLogout = () => {
     clearAuthToken();
     router.push("/admin/login");
+  };
+
+  const toggleTheme = () => {
+    setTheme(theme === "dark" ? "light" : "dark");
   };
 
   return (
@@ -54,8 +60,15 @@ export default function AdminCmsLayout({ children }: { children: React.ReactNode
           })}
         </nav>
 
-        {/* Logout */}
-        <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700">
+        {/* Theme toggle + Logout */}
+        <div className="px-4 py-4 border-t border-gray-200 dark:border-gray-700 space-y-1">
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === "dark" ? "Light mode" : "Dark mode"}
+          </button>
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 px-3 py-2 w-full rounded-lg text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
@@ -89,6 +102,13 @@ export default function AdminCmsLayout({ children }: { children: React.ReactNode
               </Link>
             );
           })}
+          <button
+            onClick={toggleTheme}
+            title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
           <button
             onClick={handleLogout}
             title="Logout"
