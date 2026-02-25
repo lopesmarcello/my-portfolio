@@ -2,11 +2,14 @@ package com.lopesmarcello.portfolio.controllers;
 
 import com.lopesmarcello.portfolio.dtos.LoginRequestDTO;
 import com.lopesmarcello.portfolio.dtos.LoginResponseDTO;
+import com.lopesmarcello.portfolio.dtos.MeResponseDTO;
 import com.lopesmarcello.portfolio.services.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,5 +29,10 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         return ResponseEntity.ok(new LoginResponseDTO(token));
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<MeResponseDTO> me(Authentication authentication) {
+        return ResponseEntity.ok(new MeResponseDTO(authentication.getName()));
     }
 }

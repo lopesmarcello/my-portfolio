@@ -32,3 +32,13 @@ Started: Tue Feb 24 16:22:01 PST 2026
   - Never log the password — only log the username to confirm env var loading
   - The `.env` file format (KEY=VALUE) is valid Java Properties format and loads correctly with `[.properties]` hint
 ---
+
+## 2026-02-24 - US-002 (fix-admin-login)
+- What was implemented: Added `GET /api/auth/me` endpoint to `AuthController` returning `{ "username": "..." }`. Created `MeResponseDTO`. Fixed `SecurityConfig` to add specific authenticated rule for `GET /api/auth/me` BEFORE the general `GET /api/**` permitAll rule. Added `authenticationEntryPoint` to return 401 (not 403) for unauthenticated REST requests.
+- Files changed: `controllers/AuthController.java`, `config/SecurityConfig.java`, `dtos/MeResponseDTO.java` (new)
+- **Learnings for future iterations:**
+  - Spring Security rules are matched in ORDER — add specific rules BEFORE general wildcards
+  - `GET /api/**` permitAll would silently allow GET /api/auth/me without a token; specific rule must precede it
+  - Configure `authenticationEntryPoint` to return 401 (not the default 403) for REST API JWT auth failures
+  - The `Authentication` parameter in a controller method is auto-populated by Spring Security from SecurityContext
+---

@@ -12,7 +12,7 @@
       "id": "US-002",
       "title": "Add GET /api/auth/me endpoint to the backend",
       "description": "As the Next.js middleware, I need a GET /api/auth/me endpoint that validates a Bearer token and returns 200 OK if valid (and 401 if not), so that the middleware can confirm the user's session on every admin page load.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",
