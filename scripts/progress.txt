@@ -9,6 +9,18 @@
 Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
+## 2026-02-25 - US-004
+- Dark mode styles were already applied to the layout during US-003 implementation
+- Sidebar: bg-white/dark:bg-gray-800, border, text, active link all have dark variants
+- Mobile top nav: bg-white/dark:bg-gray-800, border, text all have dark variants
+- No hard-coded white/light backgrounds remain without dark counterparts
+- Ran typecheck: passes
+- Files changed: none (already done in US-003 layout changes)
+- **Learnings for future iterations:**
+  - When implementing the toggle (US-003), dark mode classes should be added simultaneously
+  - Layout dark mode is inherent to the sidebar/nav component — can be done together with US-003
+---
+
 ## 2026-02-25 - US-003
 - Added Sun/Moon icon toggle button above Logout in sidebar (desktop)
 - Added Sun/Moon icon toggle button in mobile top nav (before Logout)
