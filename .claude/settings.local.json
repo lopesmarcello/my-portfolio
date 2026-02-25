@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -r \"auth/me\\\\|/auth/\" /workspace/backend-java/portfolio/src --include=\"*.java\" 2>/dev/null | head -20)",
+      "Bash(find /workspace -name \".env*\" -type f 2>/dev/null | grep -v node_modules | grep -v \".pnpm\")",
+      "Bash(find /workspace/backend-java/portfolio/src -name \"*.java\" -exec grep -l \"auth/me\\\\|/me\" {} \\\\;)",
+      "Bash(find /workspace/backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers -name \"*.java\" -exec grep -H \"RequestMapping\\\\|PostMapping\\\\|GetMapping\\\\|PutMapping\\\\|DeleteMapping\\\\|PatchMapping\" {} \\\\;)",
+      "Bash(mvn clean compile 2>&1 | head -200)",
+      "Bash(./mvnw clean compile 2>&1 | tail -300)",
+      "Bash(find src -name \"*.java\" -exec grep -l \"class\\\\|interface\" {} \\\\; | wc -l)"
+    ]
+  }
+}
