@@ -9,6 +9,22 @@
 Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
+## 2026-02-25 - US-005
+- All admin content pages already had dark mode styling:
+  - Dashboard: bg-white/dark:bg-gray-800, text variants, hover states all done
+  - About: form inputs with dark:bg-gray-700, dark:border-gray-600; cards with dark:bg-gray-800
+  - Resume: same pattern for all inputs, cards, experience items
+  - Posts list: table/cards with dark variants, action buttons with dark hover states
+  - New post: form inputs with dark variants, RichTextEditor with dark:bg-gray-800 toolbar
+  - Edit post: same as new post
+  - RichTextEditor component: toolbar, editor area all have dark variants
+- Ran typecheck: passes
+- Files changed: none (already done in existing codebase)
+- **Learnings for future iterations:**
+  - All admin pages had consistent dark mode: bg-gray-800 for cards, bg-gray-700 for inputs, dark:border-gray-600 for borders
+  - Form input dark mode pattern: `border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white`
+---
+
 ## 2026-02-25 - US-004
 - Dark mode styles were already applied to the layout during US-003 implementation
 - Sidebar: bg-white/dark:bg-gray-800, border, text, active link all have dark variants
