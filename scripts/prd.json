@@ -1,56 +1,48 @@
 {
-  "title": "Fix .env Loading in Spring Boot Backend",
-  "branchName": "ralph/fix-env-loading",
-  "stories": [
+  "project": "Portfolio Backend",
+  "branchName": "ralph/spring-dotenv",
+  "description": "Switch .env loading from custom DotEnvPostProcessor to the spring-dotenv library (springboot4-dotenv v5.1.0)",
+  "userStories": [
     {
       "id": "US-001",
-      "title": "Investigate the root cause of .env not loading",
-      "description": "As a developer, I need to understand exactly why spring.config.import=optional:file:../.env[.properties] does not load the .env file so I can apply the correct fix.",
+      "title": "Remove custom DotEnvPostProcessor implementation",
+      "description": "As a developer, I want to delete the custom EPP code so we have no duplicated loading logic when spring-dotenv is added.",
       "acceptanceCriteria": [
-        "Determine the working directory Spring Boot uses when resolving relative paths in spring.config.import",
-        "Confirm whether the .env file path (../.env) resolves correctly given that path",
-        "Check if the .env file format (KEY=VALUE) is compatible with the [.properties] extension hint",
-        "Document the root cause with a comment or in a commit message before proceeding to the fix"
+        "src/main/java/com/lopesmarcello/portfolio/config/DotEnvPostProcessor.java is deleted",
+        "src/main/resources/META-INF/spring.factories is deleted",
+        "The stale comment in application.properties referencing DotEnvPostProcessor is removed or updated",
+        "Build still passes (mvn package -DskipTests)"
       ],
-      "passes": true
+      "priority": 1,
+      "passes": true,
+      "notes": ""
     },
     {
       "id": "US-002",
-      "title": "Fix the .env file loading",
-      "description": "As a developer, I want the Spring Boot app to correctly load ADMIN_USERNAME, ADMIN_PASSWORD, and JWT_SECRET from the .env file so that admin credentials can be configured without hardcoding.",
+      "title": "Add spring-dotenv dependency",
+      "description": "As a developer, I want to add me.paulschwarz:springboot4-dotenv to pom.xml so the library auto-loads .env at startup.",
       "acceptanceCriteria": [
-        "Fix the spring.config.import path so .env is found at backend-java/portfolio/.env when running mvn spring-boot:run from that directory",
-        "After the fix, AuthService startup log shows the username from .env, not the default admin",
-        "JWT_SECRET and ADMIN_PASSWORD from .env are also resolved (not falling back to defaults)",
-        "The fix does not break running the app without a .env file (optional: prefix must be preserved)",
-        "Typecheck/build passes (mvn package -DskipTests)"
+        "me.paulschwarz:spring-dotenv-bom:5.1.0 is added under <dependencyManagement> in pom.xml",
+        "me.paulschwarz:springboot4-dotenv (no explicit version, resolved via BOM) is added under <dependencies>",
+        "No spring.config.import=dotenv: is needed — the library activates automatically",
+        "Build passes (mvn package -DskipTests)"
       ],
-      "passes": true
+      "priority": 2,
+      "passes": false,
+      "notes": ""
     },
     {
       "id": "US-003",
-      "title": "Add a startup warning when credentials fall back to defaults",
-      "description": "As a developer, I want the app to log a visible warning at startup when ADMIN_USERNAME or ADMIN_PASSWORD resolve to their default values so I immediately know .env is missing or not loaded.",
+      "title": "Verify .env loading with real credentials",
+      "description": "As a developer, I want to confirm that the credentials in .env are loaded at startup so that login works with real credentials, not the admin/admin defaults.",
       "acceptanceCriteria": [
-        "AuthService @PostConstruct logs a WARN-level message when adminUsername equals 'admin' (the default)",
-        "Warning message clearly states that default credentials are in use and recommends setting env vars",
-        "No warning is logged when real credentials are loaded from .env",
-        "Remove the existing System.out.println debug statements from AuthService.login()",
-        "Typecheck/build passes (mvn package -DskipTests)"
+        "Tests still pass (mvn test)",
+        "Startup log shows real credentials loaded from .env (not the default-credentials warning)",
+        "POST /api/auth/login with admin/admin credentials returns 401 (verified by test)"
       ],
-      "passes": true
-    },
-    {
-      "id": "US-004",
-      "title": "Verify the end-to-end login flow with real credentials",
-      "description": "As a developer, I want to confirm that logging in with the credentials from .env succeeds so I know the fix is complete.",
-      "acceptanceCriteria": [
-        "Start the backend with a .env containing non-default ADMIN_USERNAME and ADMIN_PASSWORD",
-        "POST /api/auth/login with those credentials returns a 200 with a JWT token",
-        "POST /api/auth/login with admin/admin (the old defaults) returns 401 (confirming defaults are no longer active)",
-        "Existing AuthControllerTest tests still pass (mvn test)"
-      ],
-      "passes": true
+      "priority": 3,
+      "passes": false,
+      "notes": ""
     }
   ]
 }

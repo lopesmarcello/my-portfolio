@@ -1,54 +1,23 @@
 # Ralph Progress Log
-Started: Wed Feb 25 04:40:59 PST 2026
+Started: Wed Feb 25 05:18:17 PST 2026
 ---
 
 ## Codebase Patterns
-- `spring.config.import` in `application.properties` resolves paths relative to the process working directory (where `mvn` is run), NOT relative to `application.properties` itself.
-- When running `mvn spring-boot:run` from `backend-java/portfolio/`, use `optional:file:.env[.properties]` (not `../.env`) to reference a `.env` file in that same directory.
-- The `[.properties]` extension hint tells Spring to parse `.env` as Java properties format (`KEY=VALUE`), compatible with standard `.env` syntax (no `export`, no shell quoting, no `$VAR` references).
-
----
+- Maven (`mvn`) is not available in this environment; the Maven wrapper (`./mvnw`) exists but requires network to download Maven itself.
+- `DotEnvPostProcessor.java` and `META-INF/spring.factories` were untracked files (not in git), so deleting them requires no `git rm`.
+- `application.properties` uses `${ENV_VAR:default}` syntax for environment variable fallbacks.
 
 ## 2026-02-25 - US-001
-- Investigated root cause of `spring.config.import` not loading `.env`
-- Root cause: `../.env` resolves to `backend-java/.env` (doesn't exist) when running from `backend-java/portfolio/`. The `.env` file is actually at `backend-java/portfolio/.env`.
-- Documented the root cause with a comment in `application.properties` above the `spring.config.import` line
-- Files changed: `backend-java/portfolio/src/main/resources/application.properties`, `scripts/prd.json`, `scripts/progress.txt`
+- What was implemented: Removed custom DotEnvPostProcessor implementation
+  - Deleted `src/main/java/com/lopesmarcello/portfolio/config/DotEnvPostProcessor.java` (was untracked)
+  - Deleted `src/main/resources/META-INF/spring.factories` (was untracked)
+  - Deleted empty `src/main/resources/META-INF/` directory
+  - Removed stale DotEnvPostProcessor comment from `application.properties`
+- Files changed:
+  - `backend-java/portfolio/src/main/resources/application.properties` (removed comment)
+  - DotEnvPostProcessor.java and spring.factories deleted (were untracked)
 - **Learnings for future iterations:**
-  - The `.env` file lives at `backend-java/portfolio/.env` — one level deeper than the broken path suggested
-  - Fix for US-002 is simply changing `../.env` to `.env` in `spring.config.import`
-  - `AuthService` still has `System.out.println` statements to remove (US-003)
----
-
-## 2026-02-25 - US-002
-- Fixed `spring.config.import` path in `application.properties`: changed `../.env` → `.env`
-- The `.env` file at `backend-java/portfolio/.env` is now correctly resolved when running from that directory
-- Updated comment to explain the fix clearly
-- Note: `mvn`/`java` not available in this environment — manual `mvn package -DskipTests` verification needed
-- Files changed: `backend-java/portfolio/src/main/resources/application.properties`, `scripts/prd.json`, `scripts/progress.txt`
-- **Learnings for future iterations:**
-  - Java/Maven are not available in this container — cannot run `mvn` commands to verify builds
-  - The `.env` format (`KEY=VALUE`, no `export`, no quotes) is compatible with `[.properties]` Spring import
----
-
-## 2026-02-25 - US-003
-- Removed all `System.out.println` debug statements from `AuthService.login()`
-- Updated `@PostConstruct` `logAdminUsername()` to log WARN when `adminUsername` equals `"admin"` (default)
-- WARN message: "Admin credentials are using default values. Set ADMIN_USERNAME and ADMIN_PASSWORD env vars for production use."
-- When real credentials are loaded, still logs INFO with the actual username
-- Files changed: `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java`, `scripts/prd.json`, `scripts/progress.txt`
-- **Learnings for future iterations:**
-  - `AuthService` uses `@Slf4j` (Lombok) for logging — `log.warn()` and `log.info()` are available
-  - Comparing with `"admin".equals(adminUsername)` avoids NPE if somehow null is injected
----
-
-## 2026-02-25 - US-004
-- Verified the test isolation: `application-test.properties` explicitly sets `admin.username=admin` / `admin.password=admin`, keeping tests independent of `.env`
-- The profile-specific properties take precedence over base `application.properties` in Spring Boot, so the `.env` fix does not interfere with tests
-- Java/Maven not available in environment — `mvn test` and live server verification require manual execution
-- Runtime verification: after the US-002 path fix, starting the app with `backend-java/portfolio/.env` (which has `ADMIN_USERNAME=l0p35x3L0`) will: (1) load credentials from `.env`, (2) log INFO with actual username (not default), (3) return 401 for `admin/admin` POST requests
-- Files changed: `scripts/prd.json`, `scripts/progress.txt`
-- **Learnings for future iterations:**
-  - Test credentials are hardcoded in `src/test/resources/application-test.properties` — safe from `.env` changes
-  - `@ActiveProfiles("test")` + profile-specific properties is the Spring Boot test isolation pattern used here
+  - The two custom EPP files were untracked by git — deletion doesn't show in `git status`
+  - The `application.properties` was already cleaned of `spring.config.import` by the previous branch
+  - Build verification skipped — Maven not available in this environment
 ---
