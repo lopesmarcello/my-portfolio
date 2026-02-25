@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import { GripVertical, Plus, Trash2 } from "lucide-react";
+import { GripVertical, Pencil, Plus, Trash2 } from "lucide-react";
 import { getAbout } from "@/lib/api";
 import { adminUpdateAbout } from "@/lib/adminApi";
 import type { Technology, Link } from "@/lib/api";
@@ -29,6 +29,7 @@ export default function AboutAdminPage() {
   const [form, setForm] = useState<FormState>(emptyForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [isEditing, setIsEditing] = useState(true);
   const techDragIndex = useRef<number | null>(null);
 
   useEffect(() => {
@@ -125,6 +126,7 @@ export default function AboutAdminPage() {
     try {
       await adminUpdateAbout(form);
       toast.success("About saved successfully");
+      setIsEditing(false);
     } catch {
       toast.error("Failed to save about. Please try again.");
     } finally {
@@ -135,6 +137,58 @@ export default function AboutAdminPage() {
   if (loading) {
     return (
       <div className="p-8 text-gray-500 dark:text-gray-400">Loading...</div>
+    );
+  }
+
+  if (!isEditing) {
+    return (
+      <div className="p-8 max-w-3xl">
+        <div className="flex items-center justify-between mb-2">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">About</h1>
+          <button
+            onClick={() => setIsEditing(true)}
+            className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors"
+          >
+            <Pencil size={14} />
+            Edit
+          </button>
+        </div>
+        <p className="text-gray-500 dark:text-gray-400 mb-8">Your bio, tech stack, and social links.</p>
+
+        <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6 space-y-3">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Bio</h2>
+          <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Name:</span> {form.name || <span className="text-gray-400">—</span>}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Title:</span> {form.title || <span className="text-gray-400">—</span>}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300"><span className="font-medium">Description:</span> {form.description || <span className="text-gray-400">—</span>}</p>
+          <p className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap"><span className="font-medium">About:</span> {form.aboutText || <span className="text-gray-400">—</span>}</p>
+        </section>
+
+        <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6 mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Technologies</h2>
+          {form.technologies.length === 0 ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">None added.</p>
+          ) : (
+            <ul className="space-y-1">
+              {form.technologies.map((t, i) => (
+                <li key={i} className="text-sm text-gray-700 dark:text-gray-300">{t.name}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Social Links</h2>
+          {form.links.length === 0 ? (
+            <p className="text-sm text-gray-400 dark:text-gray-500">None added.</p>
+          ) : (
+            <ul className="space-y-1">
+              {form.links.map((l, i) => (
+                <li key={i} className="text-sm text-gray-700 dark:text-gray-300">{l.label}: {l.url}</li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
     );
   }
 
