@@ -1,3 +1,16 @@
+## 2026-02-24 - US-017
+- Added drag-and-drop reordering to the Technologies list in the About admin page
+- Used the same HTML5 DnD pattern as the Resume experiences section (from Codebase Patterns)
+- `techDragIndex` ref tracks the dragged item index; `onDragOver` reorders state for live visual feedback; `onDrop` resets the ref
+- Added `GripVertical` handle icon from lucide-react to indicate draggability; rows get `cursor-grab` / `active:cursor-grabbing` Tailwind classes
+- Reorder is persisted when the user clicks "Save Changes" (no separate endpoint needed — technologies are saved as part of the full `adminUpdateAbout` call)
+- Files changed:
+  - `frontend/app/admin/(cms)/about/page.tsx`
+- **Learnings for future iterations:**
+  - When an entity's order is saved as part of a parent update (not a dedicated reorder endpoint), DnD only needs to update local state — no auto-save on drop is needed
+  - The `draggable` attribute + `onDragStart/onDragOver/onDrop` HTML5 DnD pattern is sufficient for list reordering without any external DnD library
+---
+
 ## 2026-02-24 - US-016
 - Added image upload UI to both the new post page and edit post page
 - Both pages now have a "Header Image" section between title and content

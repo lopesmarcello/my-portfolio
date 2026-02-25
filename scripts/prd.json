@@ -102,7 +102,7 @@
       "id": "US-017",
       "title": "Add drag-and-drop reordering for Technologies",
       "description": "As the admin, I want to reorder my technologies list via drag-and-drop so the most relevant skills appear first on my portfolio.",
-      "passes": false
+      "passes": true
     }
   ]
 }
