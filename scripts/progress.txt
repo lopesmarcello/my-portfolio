@@ -1,3 +1,28 @@
+## 2026-02-24 - US-015
+- Installed TipTap v3 (`@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/pm`) for rich text editing
+- Created `frontend/components/RichTextEditor.tsx` — headless TipTap editor with StarterKit; toolbar: bold, italic, strikethrough, inline code, H1/H2/H3, bullet list, ordered list, blockquote, code block, horizontal rule, undo/redo
+- Created `frontend/app/admin/(cms)/posts/new/page.tsx` — new post page: title input + RichTextEditor, creates post via `adminCreatePost`, redirects to edit page with returned ID
+- Created `frontend/app/admin/(cms)/posts/[id]/page.tsx` — edit post page: loads via `getPost(id)`, title input + RichTextEditor pre-filled with existing content, updates via `adminUpdatePost`, inline saved feedback
+- Updated `adminCreatePost` in `adminApi.ts` to return `{ id: number }` (parses backend response) for redirect-after-create
+- Added ProseMirror content styles to `frontend/app/globals.css` (h1-h3, p, ul, ol, li, blockquote, code, pre, hr, strong, em, s, dark variants)
+- Updated both `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` to add `/admin/posts/new` and `/admin/posts/[id]` to AppRoutes, LayoutRoutes, ParamMap, and LayoutSlotMap
+- Updated `pnpm-store` config to use `/home/node/.pnpm-store` (previous store at `/home/xelo/...` was inaccessible); ran `CI=true pnpm install` to relink before adding new packages
+- Files changed:
+  - `frontend/components/RichTextEditor.tsx` (new)
+  - `frontend/app/admin/(cms)/posts/new/page.tsx` (new)
+  - `frontend/app/admin/(cms)/posts/[id]/page.tsx` (new)
+  - `frontend/lib/adminApi.ts` (updated `adminCreatePost` return type)
+  - `frontend/app/globals.css` (added ProseMirror styles)
+  - `frontend/package.json` + `pnpm-lock.yaml` (new TipTap dependencies)
+- **Learnings for future iterations:**
+  - TipTap v3 uses `immediatelyRender: false` option to avoid SSR hydration mismatches in Next.js
+  - Use `onMouseDown + e.preventDefault()` on toolbar buttons (not `onClick`) to prevent the editor from losing focus when clicking toolbar
+  - TipTap is not a controlled component — pass `defaultValue` once and use `key={stableId}` if you need to reinitialize; do NOT pass `value` as a changing prop
+  - For edit pages: render the editor only after data loads (guarded by `loading` state) — React 18 batches all state updates so `content` is already set when `loading` becomes false
+  - `adminCreatePost` now returns `{ id: number }` — callers that discarded the return value before still compile (TypeScript allows ignoring return values)
+  - pnpm store location issue: if `node_modules` was linked from an inaccessible store, run `CI=true pnpm install` first to relink, then `pnpm add` new packages
+---
+
 ## 2026-02-24 - US-013
 - Created `frontend/app/admin/(cms)/resume/page.tsx` — Resume management page with basic info editing, links management, and experience list with drag-and-drop reordering
 - Basic info section: fullName, title, email, phone, about — saved via `adminUpdateResume()` which also persists links in one call
@@ -48,6 +73,8 @@
 - Spring Boot 4 uses `SecurityFilterChain` bean pattern, NOT `WebSecurityConfigurerAdapter` (deprecated)
 - jjwt 0.12.x uses `Jwts.builder()` / `Jwts.parser()` API (not `parserBuilder()` which is 0.11.x)
 - prd.json lives at `/workspace/scripts/prd.json`; progress.txt lives at `/workspace/scripts/progress.txt`
+- TipTap rich text editor: use `immediatelyRender: false` to avoid SSR issues; toolbar buttons use `onMouseDown + e.preventDefault()` to preserve editor focus; pass content as `defaultValue` (not `value`) since TipTap is uncontrolled; use `key={stableId}` to reinitialize if needed
+- pnpm store may need relink if store path is inaccessible: run `CI=true pnpm install` to relink existing deps before adding new ones
 - Admin credentials stored as env vars `ADMIN_USERNAME` / `ADMIN_PASSWORD` in application.properties (same pattern as JWT_SECRET)
 - Auth endpoint: `POST /api/auth/login` — body `{username, password}`, returns `{token}` or 401
 - Spring Security CORS: define `CorsConfigurationSource` bean in `SecurityConfig` + use `.cors(Customizer.withDefaults())` — this takes precedence over `WebMvcConfigurer.addCorsMappings()`
