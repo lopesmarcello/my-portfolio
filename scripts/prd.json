@@ -28,7 +28,7 @@
         "Build passes (mvn package -DskipTests)"
       ],
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "notes": ""
     },
     {

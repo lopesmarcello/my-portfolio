@@ -7,6 +7,19 @@ Started: Wed Feb 25 05:18:17 PST 2026
 - `DotEnvPostProcessor.java` and `META-INF/spring.factories` were untracked files (not in git), so deleting them requires no `git rm`.
 - `application.properties` uses `${ENV_VAR:default}` syntax for environment variable fallbacks.
 
+## 2026-02-25 - US-002
+- What was implemented: Added spring-dotenv library dependency to pom.xml
+  - Added `me.paulschwarz:spring-dotenv-bom:5.1.0` under `<dependencyManagement>`
+  - Added `me.paulschwarz:springboot4-dotenv` (no version, resolved via BOM) to `<dependencies>`
+  - Library auto-loads `.env` at startup; no `spring.config.import` needed
+- Files changed:
+  - `backend-java/portfolio/pom.xml`
+- **Learnings for future iterations:**
+  - `springboot4-dotenv` library is the Spring Boot 4 compatible variant of spring-dotenv
+  - Add BOM to `<dependencyManagement>` with `<type>pom</type><scope>import</scope>`, then reference artifact without version in `<dependencies>`
+  - No additional configuration needed — library activates automatically on startup
+---
+
 ## 2026-02-25 - US-001
 - What was implemented: Removed custom DotEnvPostProcessor implementation
   - Deleted `src/main/java/com/lopesmarcello/portfolio/config/DotEnvPostProcessor.java` (was untracked)
