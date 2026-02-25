@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { GripVertical, Plus, Trash2 } from "lucide-react";
 import { getAbout } from "@/lib/api";
 import { adminUpdateAbout } from "@/lib/adminApi";
 import type { Technology, Link } from "@/lib/api";
@@ -30,6 +30,7 @@ export default function AboutAdminPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const techDragIndex = useRef<number | null>(null);
 
   useEffect(() => {
     getAbout()
@@ -77,6 +78,28 @@ export default function AboutAdminPage() {
       technologies: prev.technologies.filter((_, i) => i !== index),
     }));
     setSuccess(false);
+  };
+
+  const handleTechDragStart = (index: number) => {
+    techDragIndex.current = index;
+  };
+
+  const handleTechDragOver = (e: React.DragEvent, overIndex: number) => {
+    e.preventDefault();
+    const from = techDragIndex.current;
+    if (from === null || from === overIndex) return;
+    setForm((prev) => {
+      const technologies = [...prev.technologies];
+      const [moved] = technologies.splice(from, 1);
+      technologies.splice(overIndex, 0, moved);
+      return { ...prev, technologies };
+    });
+    techDragIndex.current = overIndex;
+    setSuccess(false);
+  };
+
+  const handleTechDrop = () => {
+    techDragIndex.current = null;
   };
 
   // Links
@@ -203,7 +226,17 @@ export default function AboutAdminPage() {
         )}
         <div className="space-y-3">
           {form.technologies.map((tech, i) => (
-            <div key={i} className="flex gap-3 items-start">
+            <div
+              key={i}
+              draggable
+              onDragStart={() => handleTechDragStart(i)}
+              onDragOver={(e) => handleTechDragOver(e, i)}
+              onDrop={handleTechDrop}
+              className="flex gap-3 items-start cursor-grab active:cursor-grabbing"
+            >
+              <div className="pt-2.5 text-gray-400 dark:text-gray-500 shrink-0">
+                <GripVertical size={16} />
+              </div>
               <div className="flex-1 grid grid-cols-2 gap-3">
                 <input
                   type="text"
