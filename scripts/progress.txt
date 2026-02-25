@@ -9,6 +9,15 @@ Started: Wed Feb 25 06:55:55 PST 2026
 - The single post page (/content/[id]/page.tsx) is a "use client" component
 - PostCard.tsx uses `generateExcerpt()` from `@/lib/utils` for excerpt generation
 
+## 2026-02-25 - US-003
+- What was implemented: Strip HTML tags from post.content before calling generateExcerpt() in PostCard.tsx using inline regex
+- Files changed: frontend/components/PostCard.tsx, scripts/prd.json, scripts/progress.txt
+- **Learnings for future iterations:**
+  - generateExcerpt() is in @/lib/utils and accepts plain text — strip HTML before calling it
+  - Inline regex approach: `content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim()` keeps changes minimal
+  - No new utility functions needed — single-line inline regex per PRD requirements
+---
+
 ## 2026-02-25 - US-002
 - What was implemented: Sanitized post.content with DOMPurify.sanitize() and rendered via dangerouslySetInnerHTML; applied prose prose-lg dark:prose-invert classes; removed whitespace-pre-wrap
 - Files changed: frontend/app/(public)/content/[id]/page.tsx

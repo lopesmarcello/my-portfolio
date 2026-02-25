@@ -32,7 +32,7 @@
       "id": "US-003",
       "title": "Fix plain-text excerpt in PostCard",
       "description": "Strip HTML tags from post.content before generating the excerpt so PostCard shows readable text.",
-      "passes": false,
+      "passes": true,
       "acceptanceCriteria": [
         "Before calling generateExcerpt(), all HTML tags are stripped from post.content",
         "The excerpt shows actual post text with no HTML tags visible",
