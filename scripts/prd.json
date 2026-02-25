@@ -24,7 +24,7 @@
       "id": "US-004",
       "title": "Add backend integration tests for the auth flow",
       "description": "As a developer, I need automated tests covering the login and /me endpoints so that credential loading and token validation regressions are caught immediately.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-005",

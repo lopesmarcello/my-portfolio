@@ -6,6 +6,9 @@ Started: Tue Feb 24 16:47:39 PST 2026
 - Frontend error handling: Use typed Error subclasses (e.g. `InvalidCredentialsError extends Error`) in `lib/adminApi.ts` and import them into page components for `instanceof` checks
 - TypeScript tsc errors in `.next/types/validator.ts` are from stale build cache and are pre-existing (not caused by source edits) — run `pnpm lint` on specific files to confirm source changes are clean
 - Pre-existing lint errors exist in `components/Header.tsx`, `components/LiquidEther.jsx`, `app/(public)/curriculum/page.tsx`, `app/(public)/page.tsx` — do NOT fix these unless specifically tasked
+- Backend tests: use `@SpringBootTest` + `@AutoConfigureMockMvc` + `@ActiveProfiles("test")`. H2 in-memory DB configured in `src/test/resources/application-test.properties`. Profile-specific properties override `.env` imports.
+- Backend JWT test: to build an expired token in a test, use `Jwts.builder()` directly with `Keys.hmacShaKeyFor(jwtSecret.getBytes())` and `expiration(new Date(System.currentTimeMillis() - N))`
+- Maven/Java are NOT available in this dev container — `mvn test` must be run manually by the developer after changes
 
 ## 2026-02-24 - US-003
 - Implemented typed error classes `InvalidCredentialsError` and `ServerError` in `frontend/lib/adminApi.ts`
@@ -16,4 +19,16 @@ Started: Tue Feb 24 16:47:39 PST 2026
   - `adminLogin()` in `lib/adminApi.ts` is the single place for all auth HTTP calls; error types are co-located there
   - Login page at `app/admin/login/page.tsx` catches errors from `adminLogin()` and maps them to user-facing messages
   - The `.next` directory causes false tsc errors due to stale type cache; use `pnpm eslint <file>` to check only modified source files
+---
+
+## 2026-02-24 - US-004
+- Added H2 dependency to `pom.xml` (test scope) to enable database-free integration tests
+- Created `src/test/resources/application-test.properties` configuring H2 in-memory DB, test JWT secret, and `admin`/`admin` credentials
+- Added `@ActiveProfiles("test")` to existing `PortfolioApplicationTests` so it uses H2 instead of PostgreSQL
+- Created `AuthControllerTest.java` with 6 tests covering: login success (200+token), login failure (401), `/me` with valid token (200+username), `/me` with no token (401), `/me` with expired token (401), `/me` with invalid token (401)
+- Files changed: `backend-java/portfolio/pom.xml`, `backend-java/portfolio/src/test/resources/application-test.properties`, `backend-java/portfolio/src/test/java/.../PortfolioApplicationTests.java`, `backend-java/portfolio/src/test/java/.../AuthControllerTest.java`, `scripts/prd.json`, `scripts/progress.txt`
+- **Learnings for future iterations:**
+  - Maven and Java are not available in this environment; tests were written and code-reviewed but not executed — developer must run `./mvnw test` from `backend-java/portfolio/` to confirm
+  - `application-test.properties` (profile-specific) has higher precedence than `application.properties` and its `spring.config.import` imports, so test credentials safely override any `.env` file
+  - `JwtService` requires `jwt.secret` to be at least 32 bytes for HMAC-SHA256 signing
 ---
