@@ -84,7 +84,7 @@
       "id": "US-014",
       "title": "Create admin Blog Posts list page",
       "description": "As the admin, I want to see all my blog posts in a list so I can manage, edit, or delete them.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-015",

@@ -15,10 +15,29 @@
   - Resume info + links are updated together via a single `adminUpdateResume()` call — no separate endpoint for links
 ---
 
+## 2026-02-24 - US-014
+- Created `frontend/app/admin/(cms)/posts/page.tsx` — Blog Posts list page with post table, edit links, and inline delete confirmation
+- Added `DELETE /api/posts/{id}` endpoint to `PostController.java` (service already had `deletePost()` method)
+- Added `adminDeletePost(id)` to `frontend/lib/adminApi.ts`
+- Posts list: loads via `getPosts()`, shows title + date + content preview (strips HTML tags), per-row edit link (`/admin/posts/{id}`) and delete button
+- Delete UX: inline two-step confirm (trash icon → confirm/cancel row) to avoid accidental deletions; no native `confirm()` dialog
+- Empty state: centered message with "Create your first post" CTA button
+- Fixed pre-existing dev/types/routes.d.ts inconsistency: LayoutRoutes and LayoutSlotMap were missing all `/admin/*` sub-routes that types/routes.d.ts had (caused validator.ts tsc errors)
+- Files changed:
+  - `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/controllers/PostController.java`
+  - `frontend/lib/adminApi.ts` (added `adminDeletePost`)
+  - `frontend/app/admin/(cms)/posts/page.tsx` (new)
+  - `frontend/.next/types/routes.d.ts` and `frontend/.next/dev/types/routes.d.ts` (updated, gitignored)
+- **Learnings for future iterations:**
+  - `.next/dev/types/routes.d.ts` LayoutRoutes and LayoutSlotMap must stay in sync with `.next/types/routes.d.ts` — they were diverging silently since each iteration only updated one
+  - Strip HTML for content preview: `text.replace(/<[^>]*>/g, "")` — needed since blog content may be rich text/HTML
+  - Inline two-step delete confirm (state-based, no window.confirm) keeps the UI clean and consistent with dark mode styling
+---
+
 ## Codebase Patterns
 - Admin sidebar layout lives in `app/admin/(cms)/layout.tsx` (route group); `app/admin/layout.tsx` is a minimal pass-through so `/admin/login` only gets the root layout (no sidebar)
 - Next.js route groups: public pages live in `app/(public)/` (Header/Footer via `(public)/layout.tsx`); admin pages in `app/admin/` (no public chrome); root `app/layout.tsx` is minimal (html/body only)
-- When adding new routes/layouts, also update `.next/types/routes.d.ts` and `.next/dev/types/routes.d.ts` (gitignored, regenerated on build, but must be updated manually for local tsc to pass)
+- When adding new routes/layouts, update BOTH `.next/types/routes.d.ts` AND `.next/dev/types/routes.d.ts` keeping them in sync (gitignored, regenerated on build, but must be updated manually for local tsc to pass). Both files need matching AppRoutes, LayoutRoutes, ParamMap, and LayoutSlotMap.
 - Next.js middleware (Edge Runtime): read `admin_token` cookie via `request.cookies.get(TOKEN_COOKIE)?.value`; forward as `Authorization: Bearer <token>` header to backend `/api/auth/me`; redirect to `/admin/login` if 401, redirect `/admin/login` → `/admin/dashboard` if already authenticated
 - Java/Maven not available in this container — backend tests cannot be run directly; verify manually or in CI
 - Frontend TypeScript check: `/workspace/frontend/node_modules/.bin/tsc --noEmit --project /workspace/frontend/tsconfig.json`
