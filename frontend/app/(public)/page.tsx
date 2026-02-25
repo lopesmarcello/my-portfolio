@@ -5,12 +5,12 @@ import Link from "next/link";
 import { getAbout, AboutData } from "@/lib/api";
 import TechStack from "@/components/TechStack";
 import LiquidEther from "@/components/LiquidEther";
-import { Mail, Github, Linkedin } from "lucide-react";
 
 export default function Home() {
   const [about, setAbout] = useState<AboutData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDark, setIsDark] = useState(true);
+
+  const isDark = typeof document !== "undefined" && document.documentElement.classList.contains("dark")
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,20 +25,6 @@ export default function Home() {
     };
 
     fetchData();
-  }, []);
-
-  // Detect dark mode preference
-  useEffect(() => {
-    const checkDarkMode = () => {
-      const isDarkMode = document.documentElement.classList.contains("dark");
-      setIsDark(isDarkMode);
-    };
-
-    checkDarkMode();
-    const observer = new MutationObserver(checkDarkMode);
-    observer.observe(document.documentElement, { attributes: true });
-
-    return () => observer.disconnect();
   }, []);
 
   if (isLoading) {
@@ -71,7 +57,11 @@ export default function Home() {
         {/* LiquidEther Background */}
         <div className="absolute inset-0 z-0">
           <LiquidEther
-            colors={isDark ? ["#16a34a", "#15803d", "#059669"] : ["#60a5fa", "#3b82f6", "#2563eb"]}
+            colors={
+              isDark
+                ? ["#16a34a", "#15803d", "#059669"]
+                : ["#60a5fa", "#3b82f6", "#2563eb"]
+            }
             mouseForce={25}
             cursorSize={120}
             autoDemo={true}

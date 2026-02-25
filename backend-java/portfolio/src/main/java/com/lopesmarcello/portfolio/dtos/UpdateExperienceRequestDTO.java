@@ -14,4 +14,5 @@ public class UpdateExperienceRequestDTO {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer displayOrder;
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.lopesmarcello.portfolio.dtos.ReorderExperienceItemDTO;
 import com.lopesmarcello.portfolio.dtos.ResumeResponseDTO;
 import com.lopesmarcello.portfolio.embeddables.Link;
 import com.lopesmarcello.portfolio.entities.ExperienceEntity;
@@ -146,8 +147,26 @@ public class ResumeService {
         experience.setDescription(updatedExperience.getDescription());
         experience.setStartDate(updatedExperience.getStartDate());
         experience.setEndDate(updatedExperience.getEndDate());
+        experience.setDisplayOrder(updatedExperience.getDisplayOrder());
 
         return experienceRepository.save(experience);
+    }
+
+    @Transactional
+    public List<ExperienceEntity> reorderExperiences(List<ReorderExperienceItemDTO> items) {
+        List<ExperienceEntity> updated = new ArrayList<>();
+        for (ReorderExperienceItemDTO item : items) {
+            ExperienceEntity experience = experienceRepository.findById(item.getId())
+                    .orElseThrow(() -> new EntityNotFoundException("Experience not found: " + item.getId()));
+
+            if (experience.getResume() == null || !experience.getResume().getId().equals(1L)) {
+                throw new RuntimeException("Experience does not belong to resume ID 1");
+            }
+
+            experience.setDisplayOrder(item.getDisplayOrder());
+            updated.add(experienceRepository.save(experience));
+        }
+        return updated;
     }
 
     @Transactional

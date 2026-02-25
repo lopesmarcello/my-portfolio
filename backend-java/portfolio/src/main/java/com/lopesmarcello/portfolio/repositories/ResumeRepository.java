@@ -15,7 +15,7 @@ public interface ResumeRepository extends JpaRepository<ResumeEntity, Long> {
     @Query("SELECT r FROM ResumeEntity r WHERE r.id = :id")
     Optional<ResumeEntity> findByIdBasic(@Param("id") Long id);
 
-    @Query("SELECT e FROM ExperienceEntity e WHERE e.resume.id = :resumeId ORDER BY e.startDate DESC")
+    @Query("SELECT e FROM ExperienceEntity e WHERE e.resume.id = :resumeId ORDER BY CASE WHEN e.displayOrder IS NULL THEN 1 ELSE 0 END, e.displayOrder ASC, e.startDate DESC")
     List<ExperienceEntity> findExperiencesByResumeId(@Param("resumeId") Long resumeId);
 
     @Query("SELECT r FROM ResumeEntity r LEFT JOIN FETCH r.links WHERE r.id = :id")
