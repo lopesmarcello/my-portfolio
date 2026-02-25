@@ -41,3 +41,14 @@ Started: Wed Feb 25 04:40:59 PST 2026
   - `AuthService` uses `@Slf4j` (Lombok) for logging — `log.warn()` and `log.info()` are available
   - Comparing with `"admin".equals(adminUsername)` avoids NPE if somehow null is injected
 ---
+
+## 2026-02-25 - US-004
+- Verified the test isolation: `application-test.properties` explicitly sets `admin.username=admin` / `admin.password=admin`, keeping tests independent of `.env`
+- The profile-specific properties take precedence over base `application.properties` in Spring Boot, so the `.env` fix does not interfere with tests
+- Java/Maven not available in environment — `mvn test` and live server verification require manual execution
+- Runtime verification: after the US-002 path fix, starting the app with `backend-java/portfolio/.env` (which has `ADMIN_USERNAME=l0p35x3L0`) will: (1) load credentials from `.env`, (2) log INFO with actual username (not default), (3) return 401 for `admin/admin` POST requests
+- Files changed: `scripts/prd.json`, `scripts/progress.txt`
+- **Learnings for future iterations:**
+  - Test credentials are hardcoded in `src/test/resources/application-test.properties` — safe from `.env` changes
+  - `@ActiveProfiles("test")` + profile-specific properties is the Spring Boot test isolation pattern used here
+---

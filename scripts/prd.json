@@ -50,7 +50,7 @@
         "POST /api/auth/login with admin/admin (the old defaults) returns 401 (confirming defaults are no longer active)",
         "Existing AuthControllerTest tests still pass (mvn test)"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
