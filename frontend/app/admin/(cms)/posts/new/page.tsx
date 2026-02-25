@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 import { ArrowLeft, Save, Upload, X } from "lucide-react";
 import { adminCreatePost, adminUploadImage } from "@/lib/adminApi";
 import RichTextEditor from "@/components/RichTextEditor";
@@ -14,19 +15,17 @@ export default function NewPostPage() {
   const [headerImageUrl, setHeaderImageUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setError(null);
     try {
       const url = await adminUploadImage(file);
       setHeaderImageUrl(url);
     } catch {
-      setError("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -35,16 +34,16 @@ export default function NewPostPage() {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      setError("Title is required.");
+      toast.error("Title is required.");
       return;
     }
     setSaving(true);
-    setError(null);
     try {
       const { id } = await adminCreatePost({ title, content, headerImageUrl: headerImageUrl || undefined });
+      toast.success("Post created successfully");
       router.push(`/admin/posts/${id}`);
     } catch {
-      setError("Failed to create post. Please try again.");
+      toast.error("Failed to create post. Please try again.");
       setSaving(false);
     }
   };
@@ -60,12 +59,6 @@ export default function NewPostPage() {
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">New Post</h1>
       </div>
-
-      {error && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
-      )}
 
       <div className="space-y-5">
         <div>

@@ -3,7 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Save, Check, Upload, X } from "lucide-react";
+import { toast } from "sonner";
+import { ArrowLeft, Save, Upload, X } from "lucide-react";
 import { getPost } from "@/lib/api";
 import { adminUpdatePost, adminUploadImage } from "@/lib/adminApi";
 import RichTextEditor from "@/components/RichTextEditor";
@@ -21,8 +22,6 @@ export default function EditPostPage() {
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -37,7 +36,7 @@ export default function EditPostPage() {
         setContent(data.content);
         setHeaderImageUrl(data.headerImageUrl ?? "");
       })
-      .catch(() => setError("Failed to load post."))
+      .catch(() => toast.error("Failed to load post."))
       .finally(() => setLoading(false));
   }, [postId, router]);
 
@@ -45,12 +44,11 @@ export default function EditPostPage() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    setError(null);
     try {
       const url = await adminUploadImage(file);
       setHeaderImageUrl(url);
     } catch {
-      setError("Failed to upload image. Please try again.");
+      toast.error("Failed to upload image. Please try again.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
@@ -59,18 +57,15 @@ export default function EditPostPage() {
 
   const handleSave = async () => {
     if (!title.trim()) {
-      setError("Title is required.");
+      toast.error("Title is required.");
       return;
     }
     setSaving(true);
-    setError(null);
-    setSaved(false);
     try {
       await adminUpdatePost(postId, { title, content, headerImageUrl: headerImageUrl || undefined });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 2500);
+      toast.success("Post updated successfully");
     } catch {
-      setError("Failed to save post. Please try again.");
+      toast.error("Failed to save post. Please try again.");
     } finally {
       setSaving(false);
     }
@@ -83,7 +78,7 @@ export default function EditPostPage() {
   if (!post && !loading) {
     return (
       <div className="p-8">
-        <p className="text-red-600 dark:text-red-400 text-sm mb-4">{error ?? "Post not found."}</p>
+        <p className="text-red-600 dark:text-red-400 text-sm mb-4">Post not found.</p>
         <Link href="/admin/posts" className="text-sm text-green-600 hover:underline">
           ← Back to posts
         </Link>
@@ -102,12 +97,6 @@ export default function EditPostPage() {
         </Link>
         <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Edit Post</h1>
       </div>
-
-      {error && (
-        <div className="mb-4 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
-      )}
 
       <div className="space-y-5">
         <div>
@@ -187,8 +176,8 @@ export default function EditPostPage() {
           disabled={saving || uploading}
           className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-white bg-green-600 hover:bg-green-700 disabled:opacity-60 rounded-lg transition-colors"
         >
-          {saved ? <Check size={15} /> : <Save size={15} />}
-          {saving ? "Saving…" : saved ? "Saved!" : "Save Post"}
+          <Save size={15} />
+          {saving ? "Saving…" : "Save Post"}
         </button>
       </div>
     </div>

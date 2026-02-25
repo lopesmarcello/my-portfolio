@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { toast } from "sonner";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { getPosts } from "@/lib/api";
 import { adminDeletePost } from "@/lib/adminApi";
@@ -10,14 +11,13 @@ import type { Post } from "@/lib/api";
 export default function PostsAdminPage() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
 
   useEffect(() => {
     getPosts()
       .then((data) => setPosts(data))
-      .catch(() => setError("Failed to load posts."))
+      .catch(() => toast.error("Failed to load posts."))
       .finally(() => setLoading(false));
   }, []);
 
@@ -31,8 +31,9 @@ export default function PostsAdminPage() {
     try {
       await adminDeletePost(id);
       setPosts((prev) => prev.filter((p) => p.id !== id));
+      toast.success("Post deleted successfully");
     } catch {
-      setError("Failed to delete post. Please try again.");
+      toast.error("Failed to delete post. Please try again.");
     } finally {
       setDeletingId(null);
     }
@@ -73,13 +74,7 @@ export default function PostsAdminPage() {
       </div>
       <p className="text-gray-500 dark:text-gray-400 mb-8">Manage and edit your blog content.</p>
 
-      {error && (
-        <div className="mb-6 px-4 py-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 text-sm">
-          {error}
-        </div>
-      )}
-
-      {posts.length === 0 && !error && (
+      {posts.length === 0 && (
         <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
           <p className="text-gray-400 dark:text-gray-500 text-sm mb-4">No posts yet.</p>
           <Link

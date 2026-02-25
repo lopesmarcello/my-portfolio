@@ -9,6 +9,18 @@
 Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
+## 2026-02-25 - US-008
+- Posts list page: added toast.error on load failure, toast.success("Post deleted successfully") on delete, removed inline error div
+- New post page: added toast.success("Post created successfully") on create, toast.error on failures, removed inline error div and error state
+- Edit post page: added toast.success("Post updated successfully") on update, toast.error on failures, removed inline error div, error state, and saved state
+- Removed unused Check import from edit post page
+- Files changed: all three posts pages
+- Ran typecheck: passes
+- **Learnings for future iterations:**
+  - Pattern: remove saved/error state vars, use toast directly
+  - For validation errors (empty title), use toast.error instead of setError
+---
+
 ## 2026-02-25 - US-007
 - Added `import { toast } from "sonner"` to Resume page
 - Removed infoError, infoSuccess, addExpError state variables
