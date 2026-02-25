@@ -25,7 +25,7 @@
         "The fix does not break running the app without a .env file (optional: prefix must be preserved)",
         "Typecheck/build passes (mvn package -DskipTests)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-003",

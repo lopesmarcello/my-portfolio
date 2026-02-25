@@ -19,3 +19,14 @@ Started: Wed Feb 25 04:40:59 PST 2026
   - Fix for US-002 is simply changing `../.env` to `.env` in `spring.config.import`
   - `AuthService` still has `System.out.println` statements to remove (US-003)
 ---
+
+## 2026-02-25 - US-002
+- Fixed `spring.config.import` path in `application.properties`: changed `../.env` → `.env`
+- The `.env` file at `backend-java/portfolio/.env` is now correctly resolved when running from that directory
+- Updated comment to explain the fix clearly
+- Note: `mvn`/`java` not available in this environment — manual `mvn package -DskipTests` verification needed
+- Files changed: `backend-java/portfolio/src/main/resources/application.properties`, `scripts/prd.json`, `scripts/progress.txt`
+- **Learnings for future iterations:**
+  - Java/Maven are not available in this container — cannot run `mvn` commands to verify builds
+  - The `.env` format (`KEY=VALUE`, no `export`, no quotes) is compatible with `[.properties]` Spring import
+---
