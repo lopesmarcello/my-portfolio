@@ -1,0 +1,45 @@
+{
+  "title": "Fix Rich Text Content Rendering on Public Blog Pages",
+  "branchName": "ralph/rich-text-rendering",
+  "description": "Fix broken HTML rendering on public blog pages. TipTap saves content as HTML strings but the public site renders them as plain text with visible tags.",
+  "stories": [
+    {
+      "id": "US-001",
+      "title": "Install and configure dependencies",
+      "description": "Install isomorphic-dompurify and @tailwindcss/typography, then register the typography plugin in globals.css.",
+      "passes": false,
+      "acceptanceCriteria": [
+        "isomorphic-dompurify is added to frontend/package.json dependencies",
+        "@tailwindcss/typography is added to frontend/package.json dependencies",
+        "@tailwindcss/typography is registered as a Tailwind CSS v4 plugin in frontend/app/globals.css (via @plugin \"@tailwindcss/typography\")",
+        "Typecheck/lint passes"
+      ]
+    },
+    {
+      "id": "US-002",
+      "title": "Sanitize and render post content on the single post page",
+      "description": "Sanitize post.content with isomorphic-dompurify and render via dangerouslySetInnerHTML with prose Tailwind classes.",
+      "passes": false,
+      "acceptanceCriteria": [
+        "post.content is sanitized using isomorphic-dompurify's sanitize() before being passed to the DOM",
+        "The content container uses dangerouslySetInnerHTML={{ __html: sanitizedHtml }} to render the HTML",
+        "The content container has Tailwind's prose class (and prose-lg dark:prose-invert for sizing and dark mode)",
+        "The existing whitespace-pre-wrap class is removed from the content container",
+        "Typecheck/lint passes"
+      ]
+    },
+    {
+      "id": "US-003",
+      "title": "Fix plain-text excerpt in PostCard",
+      "description": "Strip HTML tags from post.content before generating the excerpt so PostCard shows readable text.",
+      "passes": false,
+      "acceptanceCriteria": [
+        "Before calling generateExcerpt(), all HTML tags are stripped from post.content",
+        "The excerpt shows actual post text with no HTML tags visible",
+        "Stripping done with regex directly in PostCard.tsx",
+        "Existing line-clamp-3 and word-count truncation behavior is preserved",
+        "Typecheck/lint passes"
+      ]
+    }
+  ]
+}
