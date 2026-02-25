@@ -1,11 +1,13 @@
 package com.lopesmarcello.portfolio.services;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
 import com.lopesmarcello.portfolio.security.JwtService;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
@@ -22,7 +24,11 @@ public class AuthService {
 
     @PostConstruct
     public void logAdminUsername() {
-        log.info("Admin username loaded: {}", adminUsername);
+        if ("admin".equals(adminUsername)) {
+            log.warn("Admin credentials are using default values. Set ADMIN_USERNAME and ADMIN_PASSWORD env vars for production use.");
+        } else {
+            log.info("Admin username loaded: {}", adminUsername);
+        }
     }
 
     /**

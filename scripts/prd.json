@@ -38,7 +38,7 @@
         "Remove the existing System.out.println debug statements from AuthService.login()",
         "Typecheck/build passes (mvn package -DskipTests)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-004",

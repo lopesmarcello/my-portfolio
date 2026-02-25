@@ -30,3 +30,14 @@ Started: Wed Feb 25 04:40:59 PST 2026
   - Java/Maven are not available in this container — cannot run `mvn` commands to verify builds
   - The `.env` format (`KEY=VALUE`, no `export`, no quotes) is compatible with `[.properties]` Spring import
 ---
+
+## 2026-02-25 - US-003
+- Removed all `System.out.println` debug statements from `AuthService.login()`
+- Updated `@PostConstruct` `logAdminUsername()` to log WARN when `adminUsername` equals `"admin"` (default)
+- WARN message: "Admin credentials are using default values. Set ADMIN_USERNAME and ADMIN_PASSWORD env vars for production use."
+- When real credentials are loaded, still logs INFO with the actual username
+- Files changed: `backend-java/portfolio/src/main/java/com/lopesmarcello/portfolio/services/AuthService.java`, `scripts/prd.json`, `scripts/progress.txt`
+- **Learnings for future iterations:**
+  - `AuthService` uses `@Slf4j` (Lombok) for logging — `log.warn()` and `log.info()` are available
+  - Comparing with `"admin".equals(adminUsername)` avoids NPE if somehow null is injected
+---
