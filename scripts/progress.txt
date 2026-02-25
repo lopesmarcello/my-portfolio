@@ -1,3 +1,20 @@
+## 2026-02-24 - US-016
+- Added image upload UI to both the new post page and edit post page
+- Both pages now have a "Header Image" section between title and content
+- Upload flow: hidden `<input type="file">` triggered by a styled `<label>`; on file select, calls `adminUploadImage(file)` immediately; on success shows preview with remove button
+- Remove button clears `headerImageUrl` state, reverting to the upload prompt
+- `headerImageUrl` is passed to `adminCreatePost` / `adminUpdatePost` on save
+- Edit page initializes `headerImageUrl` from loaded post data (`data.headerImageUrl ?? ""`)
+- Save button is disabled while image is uploading (`disabled={saving || uploading}`)
+- Files changed:
+  - `frontend/app/admin/(cms)/posts/new/page.tsx`
+  - `frontend/app/admin/(cms)/posts/[id]/page.tsx`
+- **Learnings for future iterations:**
+  - Image upload UX pattern: hidden file input + styled label avoids default file input styling; reset `input.value` in `finally` so same file can be re-selected after error
+  - Use `headerImageUrl || undefined` when passing to the API to avoid sending empty string (PATCH endpoint treats undefined fields as "no change")
+  - `Post.headerImageUrl` is typed as `string` in api.ts (not nullable) but can be empty — use `?? ""` when initializing from loaded data to handle nulls from backend gracefully
+---
+
 ## 2026-02-24 - US-015
 - Installed TipTap v3 (`@tiptap/react`, `@tiptap/starter-kit`, `@tiptap/pm`) for rich text editing
 - Created `frontend/components/RichTextEditor.tsx` — headless TipTap editor with StarterKit; toolbar: bold, italic, strikethrough, inline code, H1/H2/H3, bullet list, ordered list, blockquote, code block, horizontal rule, undo/redo

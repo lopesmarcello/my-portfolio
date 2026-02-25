@@ -96,7 +96,7 @@
       "id": "US-016",
       "title": "Add image upload UI for blog post header images",
       "description": "As the admin, I want to upload an image file directly in the post editor so I can set a header image without managing URLs externally.",
-      "passes": false
+      "passes": true
     },
     {
       "id": "US-017",
