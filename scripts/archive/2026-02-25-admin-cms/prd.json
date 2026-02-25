@@ -1,0 +1,167 @@
+{
+  "project": "Portfolio Admin",
+  "branchName": "ralph/admin-dark-mode-toasts",
+  "description": "Admin Dark Mode, Toast Notifications & Post-Action Navigation - Improve admin panel UX with OS-aware dark mode toggle, sonner toast feedback on all CRUD operations, and automatic navigation after post saves.",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Install and configure sonner toast library",
+      "description": "As a developer, I need a toast notification provider installed so that all admin pages can fire toasts.",
+      "acceptanceCriteria": [
+        "sonner is added to frontend/package.json dependencies",
+        "<Toaster /> is rendered inside the admin CMS layout (app/admin/(cms)/layout.tsx)",
+        "Toaster is positioned bottom-right with 4-second default duration",
+        "Typecheck passes"
+      ],
+      "priority": 1,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-002",
+      "title": "Install and configure next-themes for dark mode",
+      "description": "As a developer, I need a theme provider set up so dark mode can be toggled and persisted in the admin panel.",
+      "acceptanceCriteria": [
+        "next-themes is added to frontend/package.json dependencies",
+        "A ThemeProvider wraps the admin root layout (app/admin/layout.tsx) with attribute=\"class\" and defaultTheme=\"system\"",
+        "suppressHydrationWarning prop is added to the <html> tag in the root layout (app/layout.tsx)",
+        "Tailwind CSS v4 dark mode is configured via @variant dark (.dark) in globals.css or existing config confirmed to handle it",
+        "globals.css has both :root and .dark CSS variable token definitions for shadcn components",
+        "Typecheck passes"
+      ],
+      "priority": 2,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-003",
+      "title": "Add dark mode toggle to admin sidebar and mobile nav",
+      "description": "As an admin user, I want a dark/light mode toggle in the navigation so I can override the OS preference when needed.",
+      "acceptanceCriteria": [
+        "A sun/moon icon toggle button is visible in the admin sidebar (desktop) above the Logout button",
+        "A sun/moon icon toggle button is visible in the mobile top nav",
+        "Clicking the toggle switches between light and dark mode immediately",
+        "The preference persists across page refreshes (stored by next-themes in localStorage)",
+        "Sun icon shown for light mode, Moon icon shown for dark mode",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 3,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-004",
+      "title": "Apply dark mode styles to admin layout and navigation",
+      "description": "As an admin user, I want the admin sidebar, header, and navigation to look correct in dark mode.",
+      "acceptanceCriteria": [
+        "Sidebar background, text, border, and active-link highlight all have dark mode variants",
+        "Mobile top nav has dark mode variants",
+        "No elements remain hard-coded to white/light backgrounds in the layout/nav components",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 4,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-005",
+      "title": "Apply dark mode styles to admin content pages",
+      "description": "As an admin user, I want all admin CMS pages to look correct in dark mode.",
+      "acceptanceCriteria": [
+        "Dashboard page has dark mode variants",
+        "About edit page (form inputs, cards, labels) has dark mode variants",
+        "Resume edit page (experience cards, inputs, collapsible sections) has dark mode variants",
+        "Posts list page (table/cards, action buttons) has dark mode variants",
+        "Post new page has dark mode variants",
+        "Post edit (/admin/posts/[id]) page has dark mode variants",
+        "Form inputs (text, textarea, select) use consistent dark-mode-aware border and background",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 5,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-006",
+      "title": "Toast notifications on About page save",
+      "description": "As an admin user, I want to see a toast message when I save About page data so I know whether it succeeded or failed.",
+      "acceptanceCriteria": [
+        "On successful save of any About section: a success toast appears with message 'About saved successfully'",
+        "On failed save: an error toast appears with message 'Failed to save about. Please try again.'",
+        "Existing inline success/error alert divs on the About page are removed and replaced by toasts",
+        "The save button returns to its default state after operation completes (success or failure)",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 6,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-007",
+      "title": "Toast notifications on Resume page save",
+      "description": "As an admin user, I want to see a toast message when I save Resume data so I know whether it succeeded or failed.",
+      "acceptanceCriteria": [
+        "On successful save of any Resume section or experience item: a success toast appears with message 'Resume saved successfully'",
+        "On failed save: an error toast appears with message 'Failed to save resume. Please try again.'",
+        "Existing inline success/error divs on the Resume page are removed and replaced by toasts",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 7,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-008",
+      "title": "Toast notifications on Posts CRUD",
+      "description": "As an admin user, I want toast messages when I create, update, or delete a post so I always know the outcome.",
+      "acceptanceCriteria": [
+        "On successful post creation: success toast 'Post created successfully'",
+        "On successful post update: success toast 'Post updated successfully'",
+        "On successful post delete: success toast 'Post deleted successfully'",
+        "On any failed operation: error toast with descriptive message",
+        "Existing inline success/error divs on all Posts pages are removed and replaced by toasts",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 8,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-009",
+      "title": "Redirect to post list after successful post create or edit",
+      "description": "As an admin user, I want to be sent back to the posts list after saving a new or existing post so I can see the updated list immediately.",
+      "acceptanceCriteria": [
+        "After successful create on /admin/posts/new: fires success toast then redirects to /admin/posts",
+        "After successful save on /admin/posts/[id]: fires success toast then redirects to /admin/posts",
+        "Redirect happens after the toast is triggered so the toast is visible on the posts list page",
+        "On failure: no redirect occurs, error toast shown and user stays on the form",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 9,
+      "passes": false,
+      "notes": ""
+    },
+    {
+      "id": "US-010",
+      "title": "Exit edit mode after successful inline save (About & Resume)",
+      "description": "As an admin user, I want inline edit sections to collapse back to read-only view after a successful save so I get clear confirmation that saving is done.",
+      "acceptanceCriteria": [
+        "About page: after a successful save, the edited section transitions back to its read-only/display state",
+        "Resume page: after a successful save of an experience item, that item collapses back to its collapsed/read-only state",
+        "On failure: the section stays in edit mode so the user can correct and retry",
+        "Typecheck passes",
+        "Verify in browser using dev-browser skill"
+      ],
+      "priority": 10,
+      "passes": false,
+      "notes": ""
+    }
+  ]
+}
