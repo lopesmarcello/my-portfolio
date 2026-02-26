@@ -42,19 +42,19 @@ export default function Header() {
                             href="/"
                             className="text-gray-700 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-400 transition-colors font-medium"
                         >
-                            Home
+                            Início
                         </Link>
                         <Link
                             href="/content"
                             className="text-gray-700 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-400 transition-colors font-medium"
                         >
-                            Content
+                            Conteúdo
                         </Link>
                         <Link
                             href="/curriculum"
                             className="text-gray-700 dark:text-gray-300 hover:text-green-500 dark:hover:text-green-400 transition-colors font-medium"
                         >
-                            Curriculum
+                            Currículo
                         </Link>
                     </div>
 
@@ -62,7 +62,7 @@ export default function Header() {
                         <button
                             onClick={toggleTheme}
                             className="p-2 rounded-lg bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
-                            aria-label="Toggle theme"
+                            aria-label="Alternar tema"
                         >
                             {isDark ? (
                                 <Sun size={20} />

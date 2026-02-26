@@ -16,7 +16,7 @@ export default function ContentPage() {
                 setPosts(Array.isArray(data) ? data : []);
             } catch (err) {
                 console.error("Failed to fetch posts:", err);
-                setError("Failed to load posts");
+                setError("Falha ao carregar posts");
             } finally {
                 setIsLoading(false);
             }
@@ -31,10 +31,10 @@ export default function ContentPage() {
                 {/* Header */}
                 <div className="mb-12">
                     <h1 className="text-5xl font-bold text-black dark:text-white mb-4">
-                        Content & Blog
+                        Conteúdo & Blog
                     </h1>
                     <p className="text-xl text-gray-600 dark:text-gray-400">
-                        Thoughts, tutorials, and insights about web development and technology
+                        Pensamentos, tutoriais e insights sobre desenvolvimento web e tecnologia
                     </p>
                 </div>
 
@@ -45,7 +45,7 @@ export default function ContentPage() {
                             <div className="inline-block animate-pulse">
                                 <div className="w-24 h-24 bg-green-500 rounded-full opacity-50 mx-auto mb-4" />
                             </div>
-                            <p className="text-gray-600 dark:text-gray-400">Loading posts...</p>
+                            <p className="text-gray-600 dark:text-gray-400">Carregando posts...</p>
                         </div>
                     </div>
                 )}
@@ -61,10 +61,10 @@ export default function ContentPage() {
                 {!isLoading && !error && posts.length === 0 && (
                     <div className="bg-gray-50 dark:bg-gray-950 rounded-lg p-12 text-center border border-gray-200 dark:border-gray-800">
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-                            No posts yet
+                            Nenhum post ainda
                         </h3>
                         <p className="text-gray-600 dark:text-gray-400">
-                            Check back soon for new articles and tutorials!
+                            Volte em breve para novos artigos e tutoriais!
                         </p>
                     </div>
                 )}

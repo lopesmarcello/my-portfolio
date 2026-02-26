@@ -34,7 +34,7 @@ export default function PostPage({ params }: PostPageProps) {
                 setPost(data);
             } catch (err) {
                 console.error("Failed to fetch post:", err);
-                setError("Failed to load this post");
+                setError("Falha ao carregar este post");
             } finally {
                 setIsLoading(false);
             }
@@ -50,7 +50,7 @@ export default function PostPage({ params }: PostPageProps) {
                     <div className="inline-block animate-pulse">
                         <div className="w-24 h-24 bg-green-500 rounded-full opacity-50 mx-auto mb-4" />
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading post...</p>
+                    <p className="text-gray-600 dark:text-gray-400">Carregando post...</p>
                 </div>
             </div>
         );
@@ -63,11 +63,11 @@ export default function PostPage({ params }: PostPageProps) {
                     href="/content"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500 dark:hover:border-green-400 transition-colors font-medium mb-6"
                 >
-                    ← Back to Content
+                    ← Voltar para Conteúdo
                 </Link>
                 <div className="bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-900 rounded-lg p-6 text-center">
                     <p className="text-red-600 dark:text-red-400 font-semibold">
-                        {error || "Post not found"}
+                        {error || "Post não encontrado"}
                     </p>
                 </div>
             </div>
@@ -81,7 +81,7 @@ export default function PostPage({ params }: PostPageProps) {
                     href="/content"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500 dark:hover:border-green-400 transition-colors font-medium mb-8"
                 >
-                    ← Back to Content
+                    ← Voltar para Conteúdo
                 </Link>
 
                 {/* Header Image */}
@@ -112,7 +112,7 @@ export default function PostPage({ params }: PostPageProps) {
                                 Marcello Lopes
                             </p>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
-                                Software Engineer
+                                Engenheiro de Software
                             </p>
                         </div>
                     </div>
@@ -127,7 +127,7 @@ export default function PostPage({ params }: PostPageProps) {
                 {/* Share Section */}
                 <div className="border-t border-gray-200 dark:border-gray-800 pt-8">
                     <h3 className="text-lg font-bold text-black dark:text-white mb-4">
-                        Share this post
+                        Compartilhe este post
                     </h3>
                     <div className="flex gap-4">
                         <a
@@ -136,7 +136,7 @@ export default function PostPage({ params }: PostPageProps) {
                             rel="noopener noreferrer"
                             className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500 dark:hover:border-green-400 transition-colors font-medium"
                         >
-                            Share on Twitter
+                            Compartilhar no Twitter
                         </a>
                         <a
                             href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(typeof window !== 'undefined' ? window.location.href : '')}`}
@@ -144,7 +144,7 @@ export default function PostPage({ params }: PostPageProps) {
                             rel="noopener noreferrer"
                             className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 hover:border-green-500 dark:hover:border-green-400 transition-colors font-medium"
                         >
-                            Share on LinkedIn
+                            Compartilhar no LinkedIn
                         </a>
                     </div>
                 </div>

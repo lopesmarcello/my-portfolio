@@ -11,7 +11,7 @@ export default function TechStack({ technologies }: TechStackProps) {
             <div className="max-w-6xl mx-auto px-6">
                 <div className="mb-12">
                     <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-6">
-                        Technologies &amp; Tools
+                        Tecnologias &amp; Ferramentas
                     </h3>
                     <div className="flex flex-wrap gap-3">
                         {technologies.map((tech) => (
