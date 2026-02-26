@@ -13,12 +13,25 @@ import {
 } from "@/lib/adminApi";
 import type { Link } from "@/lib/api";
 
+// Convert "YYYY-MM-DD" → "YYYY-MM" for <input type="month">
+function toMonthInput(dateStr: string | null): string {
+  if (!dateStr) return "";
+  return dateStr.slice(0, 7);
+}
+
+// Convert "YYYY-MM" → "YYYY-MM-01" for backend LocalDate
+function fromMonthInput(monthStr: string): string {
+  if (!monthStr) return "";
+  return `${monthStr}-01`;
+}
+
 interface ExperienceItem {
   id: number;
   companyName: string;
   description: string;
   startDate: string;
   endDate: string | null;
+  isPresent: boolean;
   displayOrder: number | null;
   expanded: boolean;
   saving: boolean;
@@ -37,6 +50,7 @@ const emptyNewExp = {
   description: "",
   startDate: "",
   endDate: "",
+  isPresent: false,
 };
 
 export default function ResumeAdminPage() {
@@ -66,8 +80,9 @@ export default function ResumeAdminPage() {
           id: e.id,
           companyName: e.companyName,
           description: e.description,
-          startDate: e.startDate,
-          endDate: e.endDate,
+          startDate: toMonthInput(e.startDate),
+          endDate: e.endDate ? toMonthInput(e.endDate) : null,
+          isPresent: e.endDate === null,
           displayOrder: e.displayOrder ?? i,
           expanded: false,
           saving: false,
@@ -124,14 +139,20 @@ export default function ResumeAdminPage() {
     setExperiences((prev) => prev.map((e) => (e.id === id ? { ...e, [field]: value } : e)));
   };
 
+  const handleExpPresent = (id: number, isPresent: boolean) => {
+    setExperiences((prev) =>
+      prev.map((e) => (e.id === id ? { ...e, isPresent, endDate: isPresent ? null : "" } : e))
+    );
+  };
+
   const handleSaveExp = async (exp: ExperienceItem) => {
     setExperiences((prev) => prev.map((e) => (e.id === exp.id ? { ...e, saving: true } : e)));
     try {
       await adminUpdateExperience(exp.id, {
         companyName: exp.companyName,
         description: exp.description,
-        startDate: exp.startDate,
-        endDate: exp.endDate || null,
+        startDate: fromMonthInput(exp.startDate),
+        endDate: exp.isPresent ? null : (exp.endDate ? fromMonthInput(exp.endDate) : null),
         displayOrder: exp.displayOrder,
       });
       setExperiences((prev) =>
@@ -159,8 +180,8 @@ export default function ResumeAdminPage() {
       await adminAddExperience({
         companyName: newExp.companyName,
         description: newExp.description,
-        startDate: newExp.startDate,
-        endDate: newExp.endDate || null,
+        startDate: fromMonthInput(newExp.startDate),
+        endDate: newExp.isPresent ? null : (newExp.endDate ? fromMonthInput(newExp.endDate) : null),
         displayOrder: experiences.length,
       });
       await loadResume();
@@ -373,7 +394,7 @@ export default function ResumeAdminPage() {
                     {exp.companyName || <span className="text-gray-400">Untitled</span>}
                   </p>
                   <p className="text-xs text-gray-400 dark:text-gray-500">
-                    {exp.startDate} {exp.endDate ? `→ ${exp.endDate}` : "→ Present"}
+                    {exp.startDate} {exp.isPresent ? "→ Presente" : exp.endDate ? `→ ${exp.endDate}` : ""}
                   </p>
                 </div>
                 <button
@@ -417,22 +438,32 @@ export default function ResumeAdminPage() {
                     <div>
                       <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                       <input
-                        type="text"
-                        placeholder="e.g. 2022-01"
+                        type="month"
                         value={exp.startDate}
                         onChange={(e) => handleExpField(exp.id, "startDate", e.target.value)}
                         className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date (leave blank for present)</label>
-                      <input
-                        type="text"
-                        placeholder="e.g. 2024-06"
-                        value={exp.endDate ?? ""}
-                        onChange={(e) => handleExpField(exp.id, "endDate", e.target.value)}
-                        className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                      />
+                      <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
+                      <div className="flex items-center gap-2 mb-1">
+                        <input
+                          type="checkbox"
+                          id={`present-${exp.id}`}
+                          checked={exp.isPresent}
+                          onChange={(e) => handleExpPresent(exp.id, e.target.checked)}
+                          className="rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500"
+                        />
+                        <label htmlFor={`present-${exp.id}`} className="text-xs text-gray-600 dark:text-gray-400">Presente</label>
+                      </div>
+                      {!exp.isPresent && (
+                        <input
+                          type="month"
+                          value={exp.endDate ?? ""}
+                          onChange={(e) => handleExpField(exp.id, "endDate", e.target.value)}
+                          className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                        />
+                      )}
                     </div>
                   </div>
                   <div className="flex justify-end">
@@ -476,22 +507,32 @@ export default function ResumeAdminPage() {
               <div>
                 <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Start Date</label>
                 <input
-                  type="text"
-                  placeholder="e.g. 2022-01"
+                  type="month"
                   value={newExp.startDate}
                   onChange={(e) => setNewExp((p) => ({ ...p, startDate: e.target.value }))}
                   className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date (leave blank for present)</label>
-                <input
-                  type="text"
-                  placeholder="e.g. 2024-06"
-                  value={newExp.endDate}
-                  onChange={(e) => setNewExp((p) => ({ ...p, endDate: e.target.value }))}
-                  className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
+                <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">End Date</label>
+                <div className="flex items-center gap-2 mb-1">
+                  <input
+                    type="checkbox"
+                    id="new-exp-present"
+                    checked={newExp.isPresent}
+                    onChange={(e) => setNewExp((p) => ({ ...p, isPresent: e.target.checked, endDate: e.target.checked ? "" : p.endDate }))}
+                    className="rounded border-gray-300 dark:border-gray-600 text-green-600 focus:ring-green-500"
+                  />
+                  <label htmlFor="new-exp-present" className="text-xs text-gray-600 dark:text-gray-400">Presente</label>
+                </div>
+                {!newExp.isPresent && (
+                  <input
+                    type="month"
+                    value={newExp.endDate}
+                    onChange={(e) => setNewExp((p) => ({ ...p, endDate: e.target.value }))}
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                  />
+                )}
               </div>
             </div>
             <div className="flex justify-end gap-2">
