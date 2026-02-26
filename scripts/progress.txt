@@ -9,6 +9,20 @@ Started: Thu Feb 26 06:52:19 PST 2026
 
 ---
 
+## 2026-02-26 - US-003
+- Converted dashboard page to client component (`"use client"`)
+- Fetches about, resume, and posts in parallel with `Promise.allSettled` (graceful partial failures)
+- Shows animated `CardSkeleton` while loading; replaces with live content after fetch
+- About card: name, title, first 100 chars of bio with ellipsis
+- Resume card: fullName, experience count, most recent experience company + date range
+- Posts card: total post count + 3 most recent post titles
+- Error state: shows fallback description text + `ErrorBadge` with AlertCircle icon
+- Files changed: `frontend/app/admin/(cms)/dashboard/page.tsx`, `scripts/prd.json`
+- **Learnings for future iterations:**
+  - `Promise.allSettled` is ideal for dashboard fetches — each card can succeed/fail independently
+  - The dashboard's public API functions (`getAbout`, `getResume`, `getPosts`) are importable directly — no need for admin-specific wrappers
+---
+
 ## 2026-02-26 - US-002
 - Changed Start Date and End Date inputs from `type="text"` to `type="month"` in both experience edit and add forms
 - Added `toMonthInput(dateStr)` and `fromMonthInput(monthStr)` utility functions at top of resume page

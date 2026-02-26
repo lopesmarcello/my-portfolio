@@ -47,8 +47,8 @@
         "pnpm tsc --noEmit passes"
       ],
       "priority": 3,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Dashboard converted to client component. Fetches about/resume/posts in parallel with Promise.allSettled. Shows skeletons while loading, live previews after, error badge on failure."
     },
     {
       "id": "US-004",
