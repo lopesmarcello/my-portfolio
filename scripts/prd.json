@@ -14,8 +14,8 @@
         "mvn test passes"
       ],
       "priority": 1,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Added @Column(columnDefinition = \"TEXT\") to ResumeEntity.about. DTO and mapper pass value through unchanged."
     },
     {
       "id": "US-002",
