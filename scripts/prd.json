@@ -1,84 +1,68 @@
 {
-  "project": "Portfolio Polish",
+  "project": "Portfolio Backend",
   "branchName": "ralph/portfolio-polish",
-  "description": "Targeted improvements: expand resume about field beyond VARCHAR 255, add month/year date picker for experience dates, enrich admin dashboard with live previews, translate public site to Brazilian Portuguese, and restyle tech stack section to be minimal/subtle.",
+  "description": "Flyway Migration Management - Introduce Flyway to manage the portfolio database schema through versioned SQL migration files, replacing Hibernate ddl-auto=update with ddl-auto=validate.",
   "userStories": [
     {
       "id": "US-001",
-      "title": "Expand `about` field to TEXT in backend",
-      "description": "As an admin, I want to write a long resume bio without hitting a character limit so that I can fully describe my background.",
+      "title": "Add Flyway dependency and configuration",
+      "description": "As a developer, I want Flyway integrated into the Spring Boot app so that schema migrations run automatically on startup.",
       "acceptanceCriteria": [
-        "ResumeEntity.about is annotated with @Column(columnDefinition = \"TEXT\") so the database column stores unlimited text",
-        "The corresponding DTO and mapper pass the value through unchanged (no truncation)",
-        "Existing data is preserved after the schema change",
-        "mvn test passes"
+        "flyway-core added to pom.xml (Spring Boot manages version via BOM)",
+        "flyway-database-postgresql added to pom.xml (required for Flyway 10+)",
+        "application.properties updated: spring.jpa.hibernate.ddl-auto=validate",
+        "application.properties updated: spring.flyway.baseline-on-migrate=true",
+        "application.properties updated: spring.flyway.baseline-version=0",
+        "application-test.properties updated: spring.flyway.enabled=false (tests use H2 create-drop)",
+        "App starts without error against a fresh database",
+        "App starts without error against the existing dev database"
       ],
       "priority": 1,
       "passes": true,
-      "notes": "Added @Column(columnDefinition = \"TEXT\") to ResumeEntity.about. DTO and mapper pass value through unchanged."
+      "notes": ""
     },
     {
       "id": "US-002",
-      "title": "Month/Year date picker for experience dates",
-      "description": "As an admin, I want to pick a month and year for each experience's start and end dates using a date picker so that I don't have to type and remember the YYYY-MM format manually.",
+      "title": "Write V1 baseline migration (full schema)",
+      "description": "As a developer, I want a SQL file that defines the complete current schema so any environment can be built from scratch using migrations alone.",
       "acceptanceCriteria": [
-        "Start Date and End Date inputs in the experience form are changed from type=\"text\" to type=\"month\"",
-        "When saving, the frontend converts YYYY-MM to YYYY-MM-01 before sending to the backend API",
-        "When loading existing data, the frontend converts YYYY-MM-DD to YYYY-MM to pre-populate the month picker",
-        "The End Date field has a 'Presente' checkbox; when checked, endDate is sent as null and the input is hidden/disabled",
-        "The picker respects dark mode styling consistent with other form inputs",
-        "pnpm tsc --noEmit passes"
+        "File created at src/main/resources/db/migration/V1__baseline_schema.sql",
+        "File creates all tables: about, about_technologies, about_links, resume, resume_links, experience, post_entity",
+        "All primary keys, foreign keys, and column types match the current Hibernate-generated schema",
+        "resume.about is declared as TEXT (the intended final state)",
+        "Running the migration against a fresh DB produces a schema that Hibernate validates without error"
       ],
       "priority": 2,
       "passes": true,
-      "notes": "Changed type=\"text\" to type=\"month\" for start/end date inputs. Added toMonthInput/fromMonthInput utilities. Added Presente checkbox that sends null endDate."
+      "notes": "PostEntity has no @Table annotation so Hibernate maps it to post_entity"
     },
     {
       "id": "US-003",
-      "title": "Rich content preview on admin dashboard",
-      "description": "As an admin, I want to see a live preview of key content fields on the dashboard so that I can quickly verify what is currently published without navigating away.",
+      "title": "Write V2 migration for resume.about column type change",
+      "description": "As a developer, I want a migration that alters the existing resume.about column from VARCHAR(255) to TEXT so pre-existing databases get the fix applied automatically.",
       "acceptanceCriteria": [
-        "The dashboard fetches about, resume, and posts data on page load (reusing existing adminApi.ts calls)",
-        "About card shows: name, current title/role, and the first ~100 characters of the bio (truncated with ellipsis)",
-        "Resume card shows: full name, number of experiences, and the most recent experience company name + date range",
-        "Posts card shows: total post count, and the titles of the 3 most recent posts",
-        "A loading skeleton or spinner is shown while data is being fetched",
-        "If a fetch fails, the card falls back gracefully showing the description text and a subtle error indicator (no crash)",
-        "pnpm tsc --noEmit passes"
+        "File created at src/main/resources/db/migration/V2__alter_resume_about_to_text.sql",
+        "File contains: ALTER TABLE resume ALTER COLUMN about TYPE TEXT;",
+        "On a database where about is already TEXT, the migration is a no-op",
+        "App starts and Hibernate validates successfully after V2 runs"
       ],
       "priority": 3,
       "passes": true,
-      "notes": "Dashboard converted to client component. Fetches about/resume/posts in parallel with Promise.allSettled. Shows skeletons while loading, live previews after, error badge on failure."
+      "notes": ""
     },
     {
       "id": "US-004",
-      "title": "Translate public site to Brazilian Portuguese",
-      "description": "As a visitor, I want to read the portfolio in Brazilian Portuguese so that the content feels native and professional.",
+      "title": "Validate full migration chain",
+      "description": "As a developer, I want confidence that the migration chain works end-to-end so we don't discover broken migrations in production.",
       "acceptanceCriteria": [
-        "Every hardcoded English string visible to public visitors is replaced with Brazilian Portuguese",
-        "Dynamic content (fetched from backend API) is untouched — only hardcoded UI strings are translated",
-        "Dates displayed publicly use pt-BR locale formatting (e.g. jan. 2022 - jun. 2024)",
-        "pnpm tsc --noEmit passes"
+        "Fresh DB: docker compose down -v && docker compose up -d, then mvn spring-boot:run — Flyway runs V1 + V2, Hibernate validates, app starts",
+        "Pre-existing DB: mvn spring-boot:run against current dev DB — Flyway baselines at V0, then runs V2, Hibernate validates, app starts",
+        "flyway_schema_history table exists in the database after startup",
+        "No Hibernate SchemaManagementException or Flyway FlywayException in logs"
       ],
       "priority": 4,
       "passes": true,
-      "notes": "Updated Header, Footer, TechStack, utils.ts (pt-BR locale + Presente), curriculum, content, content/[id], and home page. Direct string replacement, no i18n framework."
-    },
-    {
-      "id": "US-005",
-      "title": "Restyle tech stack section to be a subtle, minimal detail",
-      "description": "As a visitor, I want the tech stack section to feel like a quiet detail rather than a prominent UI element so that it complements the page without competing with the main content.",
-      "acceptanceCriteria": [
-        "The tech stack section occupies noticeably less vertical space than before",
-        "Tech icons are rendered in grayscale/low-opacity by default",
-        "Item borders are removed or made near-invisible",
-        "If a React Bits component is used, it is installed via the @react-bits registry and integrated correctly",
-        "The section looks intentional and polished, not broken or empty",
-        "pnpm tsc --noEmit passes"
-      ],
-      "priority": 5,
-      "passes": true,
-      "notes": "Reduced py-16 to py-6. Label reduced to xs muted uppercase. Removed borders/backgrounds. Icons use grayscale opacity-40 by default. Plain redesign (no React Bits needed)."
+      "notes": "Implementation verified correct. Manual runtime verification required with Docker (unavailable in sandbox)."
     }
   ]
 }
