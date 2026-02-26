@@ -1,0 +1,120 @@
+{
+  "project": "Portfolio 2026",
+  "branchName": "ralph/developer-setup-guide",
+  "description": "Developer Setup Guide - Comprehensive documentation for setting up the full portfolio project locally",
+  "userStories": [
+    {
+      "id": "US-001",
+      "title": "Document prerequisites and tool requirements",
+      "description": "As a new developer, I need to know what tools to install before setting up the project.",
+      "acceptanceCriteria": [
+        "List required tools with versions (Node.js, pnpm, Java 17, Maven, Docker, PostgreSQL)",
+        "Provide installation links for each tool",
+        "Verify commands work on the system"
+      ],
+      "priority": 1,
+      "passes": true,
+      "notes": "Implemented in README.md Prerequisites section"
+    },
+    {
+      "id": "US-002",
+      "title": "Document frontend setup",
+      "description": "As a developer, I need to run the frontend locally for development.",
+      "acceptanceCriteria": [
+        "Document pnpm installation",
+        "Document frontend dependency installation",
+        "Document how to run dev server",
+        "Document available npm scripts"
+      ],
+      "priority": 2,
+      "passes": true,
+      "notes": "Implemented in README.md Frontend Setup section"
+    },
+    {
+      "id": "US-003",
+      "title": "Document backend setup",
+      "description": "As a developer, I need to run the backend API locally.",
+      "acceptanceCriteria": [
+        "Document Maven installation",
+        "Document backend dependency installation",
+        "Document how to run Spring Boot application",
+        "Document available Maven commands"
+      ],
+      "priority": 3,
+      "passes": true,
+      "notes": "Implemented in README.md Backend Setup section"
+    },
+    {
+      "id": "US-004",
+      "title": "Document database and migrations",
+      "description": "As a developer, I need to set up the PostgreSQL database and run migrations.",
+      "acceptanceCriteria": [
+        "Document Docker Compose command to start PostgreSQL",
+        "Document database connection settings",
+        "Document how to create the database",
+        "Document migration or schema setup process (if using Flyway/Liquibase)",
+        "Document how to reset the database if needed"
+      ],
+      "priority": 4,
+      "passes": true,
+      "notes": "Implemented in README.md Database Setup section"
+    },
+    {
+      "id": "US-005",
+      "title": "Document environment configuration",
+      "description": "As a developer, I need to know what environment variables to configure.",
+      "acceptanceCriteria": [
+        "List required .env variables for frontend",
+        "List required application properties for backend",
+        "Document default values where applicable",
+        "Provide example configuration files"
+      ],
+      "priority": 5,
+      "passes": true,
+      "notes": "Implemented in README.md Environment Configuration section"
+    },
+    {
+      "id": "US-006",
+      "title": "Document common issues and solutions",
+      "description": "As a developer, I need troubleshooting help when setup fails.",
+      "acceptanceCriteria": [
+        "Document port conflicts and how to resolve",
+        "Document database connection failures",
+        "Document common build errors",
+        "Document how to clean and rebuild"
+      ],
+      "priority": 6,
+      "passes": true,
+      "notes": "Implemented in README.md Troubleshooting section with 6+ issues"
+    },
+    {
+      "id": "US-007",
+      "title": "Document verification steps",
+      "description": "As a developer, I need to verify the setup is working correctly.",
+      "acceptanceCriteria": [
+        "Document how to verify frontend is running",
+        "Document how to verify backend is running",
+        "Document how to verify database connection",
+        "Document how to test API endpoints"
+      ],
+      "priority": 7,
+      "passes": true,
+      "notes": "Implemented in README.md Verification section"
+    },
+    {
+      "id": "US-008",
+      "title": "Create README in project root",
+      "description": "As a developer, I need all setup instructions in an easily discoverable location.",
+      "acceptanceCriteria": [
+        "Create comprehensive README.md in project root",
+        "Include table of contents for quick navigation",
+        "Include quick-start section for experienced developers",
+        "Link to detailed sections for each component",
+        "Verify README renders correctly on GitHub"
+      ],
+      "priority": 8,
+      "passes": true,
+      "notes": "README.md created at /workspace/README.md with full ToC, quick-start, and all sections"
+    }
+  ]
+}
