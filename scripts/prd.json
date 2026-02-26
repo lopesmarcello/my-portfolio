@@ -61,8 +61,8 @@
         "pnpm tsc --noEmit passes"
       ],
       "priority": 4,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Updated Header, Footer, TechStack, utils.ts (pt-BR locale + Presente), curriculum, content, content/[id], and home page. Direct string replacement, no i18n framework."
     },
     {
       "id": "US-005",

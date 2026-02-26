@@ -9,6 +9,22 @@ Started: Thu Feb 26 06:52:19 PST 2026
 
 ---
 
+## 2026-02-26 - US-004
+- Translated all hardcoded English strings on public-facing pages to Brazilian Portuguese
+- Updated `lib/utils.ts`: `"en-US"` → `"pt-BR"` locale for all date formatting; `"Present"` → `"Presente"`
+- `components/Header.tsx`: Home→Início, Content→Conteúdo, Curriculum→Currículo, Toggle theme→Alternar tema
+- `components/Footer.tsx`: Get in touch→Entre em contato, Created with…→Criado com…
+- `components/TechStack.tsx`: Technologies & Tools→Tecnologias & Ferramentas
+- `app/(public)/curriculum/page.tsx`: Loading, error, About, Experience, CTA section all translated
+- `app/(public)/content/page.tsx`: Page heading, description, loading, error, empty state translated
+- `app/(public)/content/[id]/page.tsx`: Loading, error, back link, share section translated; Software Engineer→Engenheiro de Software
+- `app/(public)/page.tsx`: Loading, error, greeting, CTA buttons, About Me, Quick Links, Featured In translated
+- Files changed: 8 frontend files + scripts/prd.json
+- **Learnings for future iterations:**
+  - `lib/utils.ts` is the single place controlling date locale — changing locale there updates all public date displays at once
+  - The ExperienceCard component had no hardcoded strings — all content from props — nothing to change there
+---
+
 ## 2026-02-26 - US-003
 - Converted dashboard page to client component (`"use client"`)
 - Fetches about, resume, and posts in parallel with `Promise.allSettled` (graceful partial failures)
