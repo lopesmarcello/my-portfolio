@@ -9,6 +9,20 @@ Started: Thu Feb 26 06:52:19 PST 2026
 
 ---
 
+## 2026-02-26 - US-005
+- Redesigned TechStack.tsx to be subtle and minimal (plain redesign, no React Bits component needed)
+- Reduced vertical padding: `py-16` → `py-6` (section now occupies ~60% less vertical space)
+- Section heading changed from prominent `text-lg font-semibold` to `text-xs uppercase tracking-widest text-gray-400` muted label
+- Removed all borders, background fills, and rounded-full pill styling from items
+- Icons now use Tailwind `grayscale opacity-40` by default, with `group-hover:grayscale-0 group-hover:opacity-80` for subtle reveal
+- Icon size reduced from 20px to 18px; gap tightened from `gap-3` to `gap-5` (between items, tighter within each item)
+- Text color reduced to `text-gray-400 dark:text-gray-600` (very muted) with subtle hover lift
+- Files changed: `frontend/components/TechStack.tsx`, `scripts/prd.json`
+- **Learnings for future iterations:**
+  - Tailwind `grayscale` and `opacity-*` utilities work well together for "quiet" icon states
+  - The `group` + `group-hover:` pattern on a wrapper div enables coordinated icon+text hover without JS
+---
+
 ## 2026-02-26 - US-004
 - Translated all hardcoded English strings on public-facing pages to Brazilian Portuguese
 - Updated `lib/utils.ts`: `"en-US"` → `"pt-BR"` locale for all date formatting; `"Present"` → `"Presente"`

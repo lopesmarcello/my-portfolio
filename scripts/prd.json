@@ -77,8 +77,8 @@
         "pnpm tsc --noEmit passes"
       ],
       "priority": 5,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Reduced py-16 to py-6. Label reduced to xs muted uppercase. Removed borders/backgrounds. Icons use grayscale opacity-40 by default. Plain redesign (no React Bits needed)."
     }
   ]
 }
