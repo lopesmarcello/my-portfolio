@@ -30,8 +30,8 @@
         "pnpm tsc --noEmit passes"
       ],
       "priority": 2,
-      "passes": false,
-      "notes": ""
+      "passes": true,
+      "notes": "Changed type=\"text\" to type=\"month\" for start/end date inputs. Added toMonthInput/fromMonthInput utilities. Added Presente checkbox that sends null endDate."
     },
     {
       "id": "US-003",

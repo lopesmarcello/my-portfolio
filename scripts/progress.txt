@@ -9,6 +9,20 @@ Started: Thu Feb 26 06:52:19 PST 2026
 
 ---
 
+## 2026-02-26 - US-002
+- Changed Start Date and End Date inputs from `type="text"` to `type="month"` in both experience edit and add forms
+- Added `toMonthInput(dateStr)` and `fromMonthInput(monthStr)` utility functions at top of resume page
+- Added `isPresent: boolean` to `ExperienceItem` interface and `emptyNewExp`
+- Added `handleExpPresent` handler to toggle present state for existing experiences
+- Added "Presente" checkbox that hides the end date picker and sends `null` to the API
+- Loading existing data converts `YYYY-MM-DD` → `YYYY-MM` via `toMonthInput`; saving converts back via `fromMonthInput`
+- Files changed: `frontend/app/admin/(cms)/resume/page.tsx`, `scripts/prd.json`
+- **Learnings for future iterations:**
+  - `<input type="month">` value format is `YYYY-MM`; backend `LocalDate` expects `YYYY-MM-DD` — always convert at API boundary
+  - Parentheses in path confuse zsh glob expansion — always quote paths with `(cms)` in git commands
+  - `isPresent` flag needs separate state field rather than relying on `endDate === null` to avoid ambiguity with empty string
+---
+
 ## 2026-02-26 - US-001
 - Added `@Column(columnDefinition = "TEXT")` to `ResumeEntity.about`
 - Added `jakarta.persistence.Column` import to `ResumeEntity.java`
