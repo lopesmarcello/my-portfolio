@@ -1,3 +1,25 @@
 # Ralph Progress Log
-Started: Wed Feb 25 05:54:45 PST 2026
+Started: Thu Feb 26 13:22:10 PST 2026
+---
+
+## Codebase Patterns
+- Documentation stories that all produce a single file should be batched into one commit
+- Backend uses Maven wrapper (`./mvnw`) — no system Maven install needed, use `./mvnw` in all docs
+- Frontend: `pnpm tsc --noEmit` is the quality check (no test suite present)
+- Docker Compose at project root handles PostgreSQL; DB credentials are `portfolio/portfolio`
+- Backend `application.properties` uses `${ENV_VAR:default}` syntax for env overrides
+- Backend has no Flyway migrations currently — uses `ddl-auto=update`
+
+## 2026-02-26 - US-001 through US-008 (Developer Setup Guide)
+- What was implemented: Created comprehensive `README.md` at project root covering all 8 user stories in a single document
+- Files changed:
+  - `README.md` (new) — full developer setup guide
+  - `scripts/prd.json` — all stories marked `passes: true`
+  - `tasks/prd-developer-setup-guide.md` — PRD markdown added
+- **Learnings for future iterations:**
+  - All 8 stories were pure documentation for a single README.md — implemented together in one commit as US-008
+  - README structure: Quick Start → Prerequisites → Frontend → Backend → Database → Environment → Verification → Troubleshooting
+  - No Flyway migration files exist yet despite CLAUDE.md memory mentioning Flyway patterns; backend uses `ddl-auto=update`
+  - Frontend `.env.local` only needs `NEXT_PUBLIC_API_URL`
+  - Backend env vars: `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD` (all have safe dev defaults)
 ---
