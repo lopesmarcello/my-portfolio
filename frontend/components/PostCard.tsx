@@ -29,7 +29,7 @@ export default function PostCard({ post }: PostCardProps) {
                     </h2>
 
                     <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
-                        {generateExcerpt(post.content, 25)}
+                        {generateExcerpt(post.content.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim(), 25)}
                     </p>
 
                     <div className="flex items-center justify-between">

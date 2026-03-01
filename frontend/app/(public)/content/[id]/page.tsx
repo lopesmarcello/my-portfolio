@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import DOMPurify from "isomorphic-dompurify";
 import { getPost, Post } from "@/lib/api";
 import { formatDate } from "@/lib/utils";
 
@@ -118,11 +119,10 @@ export default function PostPage({ params }: PostPageProps) {
                 </header>
 
                 {/* Article Content */}
-                <div className="prose dark:prose-invert max-w-none mb-10">
-                    <div className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-wrap">
-                        {post.content}
-                    </div>
-                </div>
+                <div
+                    className="prose prose-lg dark:prose-invert max-w-none mb-10"
+                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+                />
 
                 {/* Share Section */}
                 <div className="border-t border-gray-200 dark:border-gray-800 pt-8">

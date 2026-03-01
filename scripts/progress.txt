@@ -1,25 +1,138 @@
+## Codebase Patterns
+- Tailwind CSS v4 uses `@custom-variant dark (&:is(.dark *));` in globals.css — dark mode is class-based
+- globals.css has both `:root` and `.dark` CSS variable token definitions for shadcn
+- sonner Toaster goes in the CMS layout (app/admin/(cms)/layout.tsx) with `position="bottom-right" duration={4000}`
+- Admin CMS layout is at frontend/app/admin/(cms)/layout.tsx — it's the shared shell with sidebar and mobile nav
+- Admin root layout is at frontend/app/admin/layout.tsx — thin wrapper, good place for ThemeProvider
+- Toast pattern: remove error/success state vars, use `toast.success/error` directly in catch/try
+- Form input dark mode pattern: `border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white`
+- Edit/view toggle: use isEditing state, two separate return blocks; set isEditing=false on save success
+- next-themes: ThemeProvider needs "use client" directive; attribute="class" + enableSystem for OS-aware mode
+
 # Ralph Progress Log
-Started: Thu Feb 26 13:22:10 PST 2026
+Started: Wed Feb 25 09:25:27 PST 2026
 ---
 
-## Codebase Patterns
-- Documentation stories that all produce a single file should be batched into one commit
-- Backend uses Maven wrapper (`./mvnw`) — no system Maven install needed, use `./mvnw` in all docs
-- Frontend: `pnpm tsc --noEmit` is the quality check (no test suite present)
-- Docker Compose at project root handles PostgreSQL; DB credentials are `portfolio/portfolio`
-- Backend `application.properties` uses `${ENV_VAR:default}` syntax for env overrides
-- Backend has no Flyway migrations currently — uses `ddl-auto=update`
-
-## 2026-02-26 - US-001 through US-008 (Developer Setup Guide)
-- What was implemented: Created comprehensive `README.md` at project root covering all 8 user stories in a single document
-- Files changed:
-  - `README.md` (new) — full developer setup guide
-  - `scripts/prd.json` — all stories marked `passes: true`
-  - `tasks/prd-developer-setup-guide.md` — PRD markdown added
+## 2026-02-25 - US-010
+- About page: added isEditing state (default true), on successful save setIsEditing(false) collapses to read-only view
+- Read-only view shows Bio, Technologies, Social Links as plain text with an Edit button at the top
+- Clicking Edit button returns to form; on save failure, form stays visible
+- Resume page: handleSaveExp already sets expanded:false after save (was already implemented)
+- Files changed: frontend/app/admin/(cms)/about/page.tsx
+- Ran typecheck: passes
 - **Learnings for future iterations:**
-  - All 8 stories were pure documentation for a single README.md — implemented together in one commit as US-008
-  - README structure: Quick Start → Prerequisites → Frontend → Backend → Database → Environment → Verification → Troubleshooting
-  - No Flyway migration files exist yet despite CLAUDE.md memory mentioning Flyway patterns; backend uses `ddl-auto=update`
-  - Frontend `.env.local` only needs `NEXT_PUBLIC_API_URL`
-  - Backend env vars: `JWT_SECRET`, `ADMIN_USERNAME`, `ADMIN_PASSWORD` (all have safe dev defaults)
+  - Pattern for edit/view toggle: isEditing state, two separate return blocks (read-only and edit form)
+  - Resume experience collapse was already done — check existing behavior before implementing
+---
+
+## 2026-02-25 - US-009
+- New post page: changed router.push to /admin/posts after successful create (was /admin/posts/${id})
+- Edit post page: added router.push("/admin/posts") after successful update; moved setSaving(false) to catch only
+- Toast fires before router.push so it persists on the list page via sonner's toast state
+- Files changed: frontend/app/admin/(cms)/posts/new/page.tsx, frontend/app/admin/(cms)/posts/[id]/page.tsx
+- Ran typecheck: passes
+---
+
+## 2026-02-25 - US-008
+- Posts list page: added toast.error on load failure, toast.success("Post deleted successfully") on delete, removed inline error div
+- New post page: added toast.success("Post created successfully") on create, toast.error on failures, removed inline error div and error state
+- Edit post page: added toast.success("Post updated successfully") on update, toast.error on failures, removed inline error div, error state, and saved state
+- Removed unused Check import from edit post page
+- Files changed: all three posts pages
+- Ran typecheck: passes
+- **Learnings for future iterations:**
+  - Pattern: remove saved/error state vars, use toast directly
+  - For validation errors (empty title), use toast.error instead of setError
+---
+
+## 2026-02-25 - US-007
+- Added `import { toast } from "sonner"` to Resume page
+- Removed infoError, infoSuccess, addExpError state variables
+- Updated handleSaveInfo: toast.success/error
+- Updated handleSaveExp: toast.error on failure
+- Updated handleDeleteExp: toast.error on failure
+- Updated handleAddExp: toast.success on success, toast.error on failure
+- Updated handleDrop: toast.error on failure
+- Removed inline alert divs and inline error paragraph for addExpError from JSX
+- Files changed: frontend/app/admin/(cms)/resume/page.tsx
+- Ran typecheck: passes
+---
+
+## 2026-02-25 - US-006
+- Added `import { toast } from "sonner"` to About page
+- Removed `error` and `success` state variables
+- Updated `handleSave` to call `toast.success("About saved successfully")` on success
+- Updated `handleSave` to call `toast.error("Failed to save about. Please try again.")` on error
+- Removed inline error/success alert divs from JSX
+- Files changed: frontend/app/admin/(cms)/about/page.tsx
+- Ran typecheck: passes
+- **Learnings for future iterations:**
+  - Pattern: remove state vars (error, success), use `toast.success/error` directly in catch/try
+  - Remove all inline alert divs that conditionally render on error/success state
+---
+
+## 2026-02-25 - US-005
+- All admin content pages already had dark mode styling:
+  - Dashboard: bg-white/dark:bg-gray-800, text variants, hover states all done
+  - About: form inputs with dark:bg-gray-700, dark:border-gray-600; cards with dark:bg-gray-800
+  - Resume: same pattern for all inputs, cards, experience items
+  - Posts list: table/cards with dark variants, action buttons with dark hover states
+  - New post: form inputs with dark variants, RichTextEditor with dark:bg-gray-800 toolbar
+  - Edit post: same as new post
+  - RichTextEditor component: toolbar, editor area all have dark variants
+- Ran typecheck: passes
+- Files changed: none (already done in existing codebase)
+- **Learnings for future iterations:**
+  - All admin pages had consistent dark mode: bg-gray-800 for cards, bg-gray-700 for inputs, dark:border-gray-600 for borders
+  - Form input dark mode pattern: `border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white`
+---
+
+## 2026-02-25 - US-004
+- Dark mode styles were already applied to the layout during US-003 implementation
+- Sidebar: bg-white/dark:bg-gray-800, border, text, active link all have dark variants
+- Mobile top nav: bg-white/dark:bg-gray-800, border, text all have dark variants
+- No hard-coded white/light backgrounds remain without dark counterparts
+- Ran typecheck: passes
+- Files changed: none (already done in US-003 layout changes)
+- **Learnings for future iterations:**
+  - When implementing the toggle (US-003), dark mode classes should be added simultaneously
+  - Layout dark mode is inherent to the sidebar/nav component — can be done together with US-003
+---
+
+## 2026-02-25 - US-003
+- Added Sun/Moon icon toggle button above Logout in sidebar (desktop)
+- Added Sun/Moon icon toggle button in mobile top nav (before Logout)
+- Used `useTheme` from next-themes to get/set current theme
+- `toggleTheme` sets theme to "dark" if current is not "dark", else "light"
+- Sun icon shows in dark mode (to switch to light), Moon icon shows in light mode (to switch to dark)
+- Files changed: frontend/app/admin/(cms)/layout.tsx
+- Ran typecheck: passes
+- **Learnings for future iterations:**
+  - `useTheme` from next-themes gives `theme` (current value) and `setTheme` (setter)
+  - Theme values: "light", "dark", "system" — when toggling manually, set explicitly to "light" or "dark"
+  - The toggle button label: show opposite mode (Sun = go to light, Moon = go to dark)
+---
+
+## 2026-02-25 - US-002
+- Installed next-themes (0.4.6) via pnpm
+- Added ThemeProvider wrapping to app/admin/layout.tsx with attribute="class" defaultTheme="system" enableSystem
+- suppressHydrationWarning already existed on html tag in app/layout.tsx
+- Tailwind dark mode already configured via `@custom-variant dark (&:is(.dark *));` in globals.css
+- globals.css already had :root and .dark CSS variable definitions
+- Ran typecheck: passes
+- Files changed: frontend/app/admin/layout.tsx, frontend/package.json, frontend/pnpm-lock.yaml
+- **Learnings for future iterations:**
+  - ThemeProvider must be "use client" — add that directive to admin/layout.tsx
+  - next-themes adds .dark class to <html> via attribute="class", which triggers Tailwind's custom dark variant
+  - The @custom-variant dark (&:is(.dark *)) in globals.css is the correct Tailwind v4 approach
+---
+
+## 2026-02-25 - US-001
+- Verified sonner already added to frontend/package.json (`"sonner": "^2.0.7"`)
+- Verified `<Toaster position="bottom-right" duration={4000} />` already in app/admin/(cms)/layout.tsx
+- Ran typecheck: passes
+- Files changed: frontend/package.json, frontend/pnpm-lock.yaml, frontend/app/admin/(cms)/layout.tsx
+- **Learnings for future iterations:**
+  - The CMS layout is the right place for the Toaster (wraps all authenticated admin pages)
+  - sonner's `duration` prop on `<Toaster>` sets default; individual toasts can override
 ---
