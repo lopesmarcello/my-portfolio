@@ -31,7 +31,7 @@ export default function CurriculumPage() {
                     <div className="inline-block animate-pulse">
                         <div className="w-24 h-24 bg-green-500 rounded-full opacity-50 mx-auto mb-4" />
                     </div>
-                    <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+                    <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
                 </div>
             </div>
         );
@@ -41,7 +41,7 @@ export default function CurriculumPage() {
         return (
             <div className="min-h-screen flex items-center justify-center">
                 <div className="text-center">
-                    <p className="text-red-600 dark:text-red-400">Failed to load resume data</p>
+                    <p className="text-red-600 dark:text-red-400">Falha ao carregar currículo</p>
                 </div>
             </div>
         );
@@ -102,7 +102,7 @@ export default function CurriculumPage() {
                 {resume.about && (
                     <section className="mb-12 pb-12 border-b border-gray-200 dark:border-gray-800">
                         <h2 className="text-3xl font-bold text-black dark:text-white mb-4">
-                            About
+                            Sobre
                         </h2>
                         <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                             {resume.about}
@@ -114,7 +114,7 @@ export default function CurriculumPage() {
                 {resume.experiences && resume.experiences.length > 0 && (
                     <section className="mb-12 pb-12 border-b border-gray-200 dark:border-gray-800">
                         <h2 className="text-3xl font-bold text-black dark:text-white mb-8">
-                            Experience
+                            Experiência
                         </h2>
                         <div className="space-y-8">
                             {resume.experiences.map((experience) => (
@@ -127,17 +127,17 @@ export default function CurriculumPage() {
                 {/* Call to Action */}
                 <section className="bg-green-50 dark:bg-green-950 rounded-2xl p-8 text-center">
                     <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 mb-4">
-                        Interested in working together?
+                        Interessado em trabalhar juntos?
                     </h3>
                     <p className="text-green-800 dark:text-green-200 mb-6">
-                        Let's connect and discuss how I can help your project.
+                        Vamos nos conectar e discutir como posso ajudar no seu projeto.
                     </p>
                     {resume.email && (
                         <a
                             href={`mailto:${resume.email}`}
                             className="inline-block px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-lg transition-colors"
                         >
-                            Get in Touch
+                            Entre em Contato
                         </a>
                     )}
                 </section>

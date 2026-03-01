@@ -8,23 +8,23 @@ export function formatDate(
   dateString: string | null | undefined,
   format: "short" | "long" | "full" = "short"
 ): string {
-  if (!dateString) return "Present"
+  if (!dateString) return "Presente"
 
   const date = new Date(dateString)
 
   if (format === "short") {
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("pt-BR", {
       year: "numeric",
       month: "short",
     })
   } else if (format === "long") {
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("pt-BR", {
       year: "numeric",
       month: "long",
       day: "numeric",
     })
   } else {
-    return date.toLocaleDateString("en-US", {
+    return date.toLocaleDateString("pt-BR", {
       weekday: "long",
       year: "numeric",
       month: "long",

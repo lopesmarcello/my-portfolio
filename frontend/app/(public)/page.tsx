@@ -34,7 +34,7 @@ export default function Home() {
           <div className="inline-block animate-pulse">
             <div className="w-24 h-24 bg-green-500 rounded-full opacity-50 mx-auto mb-4" />
           </div>
-          <p className="text-gray-600 dark:text-gray-400">Loading...</p>
+          <p className="text-gray-600 dark:text-gray-400">Carregando...</p>
         </div>
       </div>
     );
@@ -44,7 +44,7 @@ export default function Home() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-600 dark:text-red-400">Failed to load portfolio data</p>
+          <p className="text-red-600 dark:text-red-400">Falha ao carregar dados do portfólio</p>
         </div>
       </div>
     );
@@ -76,7 +76,7 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
               <div className="flex flex-col justify-center order-2 md:order-1">
                 <h1 className="text-5xl md:text-6xl font-bold dark:text-white text-gray-900 drop-shadow-lg mb-4 leading-tight">
-                  Hey, I'm{" "}
+                  Olá, eu sou{" "}
                   <span className="text-transparent bg-clip-text bg-gradient-to-r dark:from-green-200 dark:to-green-100 from-blue-600 to-blue-500">
                     {about.name}
                   </span>
@@ -93,13 +93,13 @@ export default function Home() {
                     href="/curriculum"
                     className="px-8 py-3 dark:bg-white dark:text-green-700 bg-gray-900 text-white font-bold rounded-lg dark:hover:bg-gray-100 hover:bg-gray-800 transition-all hover:scale-105 shadow-lg"
                   >
-                    View My CV
+                    Ver meu CV
                   </Link>
                   <Link
                     href="/content"
                     className="px-8 py-3 border-2 dark:border-white border-gray-900 dark:text-white text-gray-900 font-bold rounded-lg dark:hover:bg-white dark:hover:text-green-700 hover:bg-gray-900 hover:text-white transition-all hover:scale-105 shadow-lg"
                   >
-                    Read My Blog
+                    Ler meu Blog
                   </Link>
                 </div>
               </div>
@@ -148,7 +148,7 @@ export default function Home() {
       <section className="py-20">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-black dark:text-white mb-8">
-            About Me
+            Sobre Mim
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             <div className="space-y-6">
@@ -157,7 +157,7 @@ export default function Home() {
               </p>
               <div className="space-y-4">
                 <h3 className="text-xl font-bold text-black dark:text-white">
-                  Quick Links
+                  Links Rápidos
                 </h3>
                 <div className="flex flex-wrap gap-3">
                   {about.links && about.links.map((link) => (
@@ -177,10 +177,10 @@ export default function Home() {
             </div>
             <div className="bg-green-50 dark:bg-green-950 rounded-2xl p-8">
               <h3 className="text-2xl font-bold text-green-900 dark:text-green-100 mb-6">
-                Featured In
+                Destaques
               </h3>
               <p className="text-green-800 dark:text-green-200">
-                This section showcases featured projects and achievements. More content coming soon.
+                Esta seção apresenta projetos e conquistas em destaque. Mais conteúdo em breve.
               </p>
             </div>
           </div>

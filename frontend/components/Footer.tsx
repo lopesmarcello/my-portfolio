@@ -10,7 +10,7 @@ export default function Footer({ links }: FooterProps) {
             <div className="max-w-6xl mx-auto px-6 py-12">
                 <div className="mb-8">
                     <h3 className="text-lg font-bold text-black dark:text-white mb-4">
-                        Get in touch
+                        Entre em contato
                     </h3>
                     {links && links.length > 0 && (
                         <div className="flex flex-wrap gap-4">
@@ -32,7 +32,7 @@ export default function Footer({ links }: FooterProps) {
 
                 <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
                     <p className="text-center text-gray-600 dark:text-gray-400 text-sm">
-                        © {new Date().getFullYear()} Marcello Lopes. Created with Next.js & React.
+                        © {new Date().getFullYear()} Marcello Lopes. Criado com Next.js & React.
                     </p>
                 </div>
             </div>
